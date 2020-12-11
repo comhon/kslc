@@ -1,0 +1,247 @@
+
+// TODO.txt
+
+// this file monitors development
+
+
+
+
+(*
+Doing:
+======
+
+
+
+
+
+To do:
+======
+	+ Allow creation of new rooms
+	+ udlgDuplicateRooms: preview the duplication and highlight conflicts 
+	+ List shifts / warps / powerups in selected rooms
+	+ TfrmMain: Global KnyttScript (tab?)
+	+ Undo
+	+ TKSRoomView is way too slow
+	+ TfrmMain: tileset background chooser (imgTileBg)
+	+ TKSRoomView: CheckRoomContents()
+	+ TfrmRoomList generic form for displaying a list of rooms that need attention / search result etc.
+	+ When duplicating, list rooms with absolute shifts that need to be taken care of
+	+ TReachCalc: calculate area that can be reached (single room or whole level)
+		- take powerups into consideration
+		- for unneeded rooms, only store wall reachability
+			- nay, won't be enough, must also store motion vectors (?)
+			- or swap to disk (?)
+.		- basic get/set functions
+.		- main loop
+.		- Juni Rect-checking (MIN_WIDTH * MIN_HEIGHT rect passable in [x, y])
+		- calculation
+			- from point
+.				- check for immediate wallswim
+				- fall down, left, right
+			- from edge
+.		- swap in / out on low memory
+	+ TKSMapView: view another set of rooms if required (to be used for duplication / paste preview)
+	+ Clipboard: conversion [set of TKSRoom] <-> plaintext
+		-> Rooms copiable between files and multiple instances of KSLC
+	+ TfrmMain: make a screenshot of current room
+	+ Switchable views:
+		- std KSLE
+		- KSLC classic
+		- KSLC editor (all windows within one parent window)
+			- one full view, one single-layer editor, one shrunk layer chooser (what layout?)
+		- KSLC editor full (layers not in a scroller, but each in its own editor-box; L3 with special "mask" twin
+			- wont fit even on the largest screen, needs ~ 1300 x 2000
+		- custom (?)
+	+ Use pngimage's zlib instead of zlib1.dll
+		-- ZLibEx tried and didnt work ("data error")
+	+ Multi-room param change: change existing warp / shift values
+	+ TPassFilter: filter out points that cannot be reached due to simple passability restrictions
+	+ TCritterChecker:
+		- check whether critters can walk in thin air
+		- check jumpers whether they have enough space above
+		- needs to know object type movement types and params
+			- jump (height)
+			- walk until L3 block (dimensions?)
+	? can anyone jump 24 + 8 px on basejump?
+		- doesnt seem so
+	+ Undo
+	+ Editting
+	+ TfrmMain: ask the user to save changes before closing
+	+ Settings: remember window coords and visibility
+		+ Powerups list
+		+ Wallswim list
+
+
+
+
+
+Done:
+=====
+2009_10_01:
+	! TKSLevel: remember unknown settings in world.ini (don't chew up custom objects) (thanks AA)
+
+2009_09_28:
+	+ udlgDuplicateRooms: fix exception on invalid input, use Val() instead
+	+ RoomDuplicator: add option whether to adjust or not shifts / warps in the copied section
+
+2009_03_06:
+	! TfrmMain: when copying selection from large to small map or vice versa, avoid recursion
+	
+2009_02_11:
+	! RoomDuplicator: selection-only duplication took room params from a wrong room
+	 
+2009_01_19:
+	+ TfrmMain: Set start pos / pwrups
+	+ Test level in KS / pwrups
+	+ TfrmMain: view start pos in rvMain
+
+2009_01_18:
+	+ On app exception, notify and offer KSLC bugreport forum
+	+ Integrate JCLDebug
+	+ TfrmMain: include a Log tab instead of TfrmLog
+	+ Log: threaded update
+
+2009_01_15:
+	+ TfrmMain: rvMain vector to show current insertion tile(s)
+	+ TKSRoomView: LogicalToCanvas()
+	+ TKSRoomView: OnMouseEnter, OnMouseLeave events
+	+ TKSTilesetView: OnMouseEnter, OnMouseLeave events
+	! TfrmMain: XP / Vista skin compatibility: re-adjust components at startup
+	+ TfrmMain: mclk to Solo a single layer
+	! TfrmMain: tvMain selection overflows in directions
+	! TfrmMain: tvMain selection gets registered into both tileset views
+	-- release 0.3.13
+	+ TfrmMain: propagate DoMouseWheel to ocMain
+	! TKSObjChooser: redraw object when changing bank
+	+ Passability: invisible triangle ground (see Drakkan's Walk in)
+	+ TfrmMain: object layer editting
+	+ TfrmMain: Map selection copying
+	+ KnyttScript tab
+	+ remake frmMain to use TKSRoomView, TKSMapView and TKSTileView all in one window
+	- Got rid of TfrmRoomParams
+	- Got rid of TfrmMap
+
+2009_01_14:
+	+ TKSObjectChooser component: bank and object display / chooser
+	+ TfrmMain: editting in rvMain (tile layers only)
+
+2009_01_13:
+	+ TVGObject: multievents for change and destruction notification
+	+ TfrmMain: tileset tile selection
+	+ TfrmMain: tileset number chooser
+	+ TfrmMain: tileset switcher buttons
+	+ TKSTilesetView component
+	+ TfrmMain: button layer chooser replaced by an image, same handling as StdLE
+	+ TKSRoomView: CanvasToLogical()
+	+ TfrmMain: rclk button edit-layer chooser
+
+2009_01_12:
+	+ TfrmMain: button layer visibility chooser
+	+ TKSRoomView: if no neighbor room, cross out area
+	+ TfrmMain: remake to use TKSRoomView
+
+2009_01_11:
+	+ KSLC component pack
+	+ TKSRoomView: a component for viewing a room, with switchable layers and passability mask
+	+ Passability: upgrade to indicate different types of passability - normal, invisible wall, invisible hole, wall
+
+2009_01_04:
+	! TKSShiftList: absolute vs relative destinations
+	+ Shift navigator: show shifts leading to a room (TfrmShiftsToHere)
+	+ rclk menu: follow shift
+	+ TShiftList object moved to inside TKSLevel, renamed to TKSShiftList.
+	! MRU filechoose fix
+	+ Intelligent "open": look for installed worlds, let user choose from a list of those
+	+ TdlgInstalledLevelList (with delay-load names and authors)
+	+ Shift navigator: list all shifts
+
+2008_06_17:
+	! TfrmMap: disable popup menu items when no level loaded
+	! TMapView: when no level loaded, don't trigger events
+	+ Better default settings (adjust windows to screen size)
+
+2008_06_15:
+	! pngimage: not supporting alpha on palettized PNGs (added)
+	
+2008_06_13:
+	+ Web update and statistics report
+
+2007_10_22:
+	+ TfrmRoomParams
+	+ Settings: remember window positions (frmMain, frmMap, frmLog)
+
+2007_10_21:
+	+ TfrmViewPowerups: dblclick shows powerup in frmMain
+	+ TMapView: react only to lclk
+	+ TfrmMap: rclk menu
+	+ MapMouseDown / MapMouseUp: shift+drag for adding, shift + click selected for removing
+	+ Make MapMouseDown / MapMouseUp / MapMouseMove / RoomSelection built into TMapView
+	+ TfrmMain: MRU file list
+
+2007_10_17:
+	! TdlgSettings: Browsing for KSDir wouldnt save the dir (thanks Drakkan)
+
+2007_10_16:
+	+ TMapView: flickerfree redraw (using TGraphicControl)
+	+ Rename to Composer
+	+ multi-room parameter change (music, bkg etc)
+	+ Representations: tileset and background loading on request
+	
+2007_10_15:
+	+ TfrmMap
+	+ TMapView component for map display
+	+ Parsing and saving the DefaultSavegame.ini
+	+ Room count to the statusbar
+
+2007_10_14:
+	! Room duplication: duplicate EventParams
+
+2007_10_13:
+	+ PNG Alpha handling consistent with KS ($ff00ff transparent for non-alpha imgs)
+	+ TfrmMain: display objects (using <KSDir>\Data\Objects ?)
+	+ TKSObject and TKSObjectCollection for object caching
+	+ TfrmMain: display edge lines
+	+ TfrmMain: shift+arrows move rooms by 10
+	+ TfrmMain: ctrl+arrows move rooms in logical coords (incl. warps)
+	+ All-rooms duplication
+	+ TKSLevel.SaveToFile()
+	! TKSLevel.LoadTiles(): improve header parser
+
+2007_10_08:
+	+ Progress callbacks
+	+ TfrmWallSwimList: go to selected WallSwim's room upon DblClick
+	+ TfrmWallSwimList: use vector objects to actually show the WallSwims
+	+ TfrmMain: vector object overlay
+	+ TfrmMain: arrows move rooms in absolute coords (excl. warps)
+	+ TfrmMain: display CurrentRoom
+
+2007_10_05:
+	+ add objects that cannot be walked through
+	+ TKSRoom: Passability instead of Mask
+
+2007_10_04:
+	+ TfrmSettings
+	+ TWallSwimChecker: two-way checking
+	+ frmWallSwimList: sorting by columns; "heap" based criteria
+	+ basic KS constants found thanks to Paula's Level-o-Metric tileset
+
+2007_10_03:
+	+ TKSLogger object and TfrmLog for logging info, warnings and errors
+
+2007_10_02:
+	+ WallSwimChecker: naive version
+
+2007_10_01:
+	+ Tileset loading
+	+ PNGLib for Delphi found and integrated
+
+2007_09_30:
+	+ Powerup search
+	+ frmViewPowerups
+
+2007_09_29:
+	+ Level Tile and Obj Loading
+
+2007_09_28:
+	+ Zlib for Delphi used
+	+ Development started

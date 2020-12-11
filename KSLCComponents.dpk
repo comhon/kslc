@@ -1,0 +1,45 @@
+package KSLCComponents;
+
+{$R *.res}
+{$R 'KSLCComponents.dcr'}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'KSLC components'}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl;
+
+contains
+  uKSRoomView in 'uKSRoomView.pas',
+  uKSRepresentations in 'uKSRepresentations.pas',
+  uKSLog in 'uKSLog.pas',
+  uKSObjects in 'uKSObjects.pas',
+  uKSObjPass in 'uKSObjPass.pas',
+  uMultiEvent in 'uMultiEvent.pas',
+  uVectors in 'uVectors.pas',
+  uKSMapView in 'uKSMapView.pas',
+  uKSTilesetView in 'uKSTilesetView.pas',
+  uKSObjectChooser in 'uKSObjectChooser.pas';
+
+end.
