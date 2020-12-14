@@ -1,6 +1,8 @@
 
 unit uReachCalc;
 
+{$MODE Delphi}
+
 interface
 
 uses

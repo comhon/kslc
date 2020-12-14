@@ -1,6 +1,8 @@
 
 unit ufrmMain;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -18,17 +20,16 @@ uses
 	ExtCtrls,
 	ComCtrls,
 	StdCtrls,
-	pngimage,
 	uVectors,
 	ShellAPI,
-	uMVersion,		// Lib/D6
+	uVersionInfo,
 	uKSLog,
 	uKSRepresentations,
 	uKSRoomView,
 	udlgInstalledLevelList,
 	uWebVersionCheckThread,
 	uKSTilesetView,
-	ThinIcoButton,
+	Buttons,
 	uKSObjectChooser,
 	uKSMapView;
 
@@ -43,6 +44,8 @@ type
 
 
 
+  { TfrmMain }
+
   TfrmMain = class(TForm)
 		alMain: TActionList;
     actFileNew: TAction;
@@ -50,6 +53,7 @@ type
     actFileSave: TAction;
     actFileSaveAs: TAction;
     actFileExit: TAction;
+    KSMapView1: TKSMapView;
     mMain: TMainMenu;
     miFile: TMenuItem;
     miFileNew: TMenuItem;
@@ -344,7 +348,7 @@ uses
 
 
 
-{$R *.dfm}
+{$R *.lfm}
 
 
 
@@ -1153,9 +1157,9 @@ end;
 function TfrmMain.GetCurrentVersion(): string;
 var
 	maj, min, rel, build: word;
-	IsDebug: boolean;
 begin
-	if (ReadVersionInfo(ParamStr(0), maj, min, rel, build, IsDebug)) then
+        Exit;
+        if (ReadVersionInfo(ParamStr(0), maj, min, rel, build)) then
 	begin
 		Result := IntToStr(maj) + '.' + IntToStr(min) + '.' + IntToStr(rel) + '.' + IntToStr(build);
 	end
@@ -1173,16 +1177,17 @@ function TfrmMain.IsVersionHigherThanCurrent(iVersion: string): boolean;
 var
 	cmaj, cmin, crel, cbui: word;
 	vmaj, vmin, vrel, vbui: word;
-	IsDebug: boolean;
 begin
-	if not(ParseVersionString(iVersion, vmaj, vmin, vrel, vbui)) then
+        Exit(false);
+
+        if not(ParseVersionString(iVersion, vmaj, vmin, vrel, vbui)) then
 	begin
 		// unreadable version from the web, never update
 		Result := false;
 		Exit;
 	end;
 
-	if not(ReadVersionInfo(ParamStr(0), cmaj, cmin, crel, cbui, IsDebug)) then
+	if not(ReadVersionInfo(ParamStr(0), cmaj, cmin, crel, cbui)) then
 	begin
 		// unreadable version info in file, always update
 		Result := true;

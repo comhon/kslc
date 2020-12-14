@@ -1,6 +1,8 @@
 
 unit uRoomDuplicator;
 
+{$MODE Delphi}
+
 interface
 
 uses

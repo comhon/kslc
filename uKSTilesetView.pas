@@ -1,5 +1,7 @@
 unit uKSTilesetView;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -9,7 +11,6 @@ uses
 	Classes,
 	Controls,
 	Graphics,
-	pngimage,
 	uKSRepresentations,
 	uVectors;
 

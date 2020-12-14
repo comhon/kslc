@@ -1,10 +1,11 @@
 
 unit uSettings;
+{$MODE Delphi}
 
 interface
 
 uses
-	Windows,
+        Windows,
 	Classes,
 	Registry;
 
@@ -47,6 +48,8 @@ type
 	end;
 
 
+procedure InitializeSettings;
+procedure FinalizeSettings;
 
 
 var
@@ -374,25 +377,20 @@ begin
 	end;
 end;
 
+//Replaced initialization section with procedure
+procedure InitializeSettings;
+begin
+     gSettings := TSettings.Create();
+     gSettings.Load(); //* This functions could ShowMessage function that requires Application object to be initialized
+end;
+
+//Replaced finalization section with procedure
+procedure FinalizeSettings;
+begin
+     gSettings.Save();
+     gSettings.Free();
+end;
 
 
-
-
-initialization
-	gSettings := TSettings.Create();
-	gSettings.Load();
-
-
-
-
-
-finalization
-	gSettings.Save();
-	gSettings.Free();
-
-
-
-
-	
 end.
  

@@ -1,5 +1,7 @@
 unit udlgSettings;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -12,7 +14,7 @@ uses
 	Controls,
 	Forms,
 	Dialogs,
-	ThinIcoButton,
+	Buttons,
 	ExtCtrls,
 	StdCtrls;
 
@@ -24,11 +26,11 @@ type
   TdlgSettings = class(TForm)
     pGameFolder: TPanel;
     pTl: TPanel;
-    tlOK: TThinIcoButton;
-    tlCancel: TThinIcoButton;
+    tlOK: TSpeedButton;
+    tlCancel: TSpeedButton;
     Label1: TLabel;
     eKSDir: TEdit;
-    tlBrowseKSDir: TThinIcoButton;
+    tlBrowseKSDir: TSpeedButton;
     pWebUpdate: TPanel;
     Label2: TLabel;
     chbAllowWebVersionCheck: TCheckBox;
@@ -57,7 +59,7 @@ uses
 
 
 
-{$R *.dfm}
+{$R *.lfm}
 
 
 

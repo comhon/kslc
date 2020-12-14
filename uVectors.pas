@@ -1,6 +1,8 @@
 
 unit uVectors;
 
+{$MODE Delphi}
+
 interface
 
 uses

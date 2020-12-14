@@ -1,5 +1,7 @@
 unit uWebVersionCheckThread;
 
+{$MODE Delphi}
+
 interface
 
 uses

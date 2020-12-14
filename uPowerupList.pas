@@ -1,6 +1,8 @@
 
 unit uPowerupList;
 
+{$MODE Delphi}
+
 interface
 
 uses

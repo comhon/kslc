@@ -1,6 +1,8 @@
 
 unit uWallSwimChecker;
 
+{$MODE Delphi}
+
 interface
 
 uses

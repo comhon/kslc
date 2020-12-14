@@ -1,6 +1,8 @@
 
 unit uKSObjPass;
 
+{$MODE Delphi}
+
 interface
 
 uses

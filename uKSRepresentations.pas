@@ -1,6 +1,8 @@
 
 unit uKSRepresentations;
 
+{$MODE Delphi}
+
 // room: 600 x 240 = (25 x 10) x (24 x 24)
 // tiles: 24 x 24
 // tileset: 16 x 8 = 384 x 192 px
@@ -12,7 +14,7 @@ uses
 	Classes,
 	SysUtils,
 	Graphics,
-	pngimage,
+	gzio, //* Included Lazarus library for gzip
 	uMultiEvent,
 	uKSObjects,
 	uKSObjPass,
@@ -106,7 +108,7 @@ type
 		Number: integer;
 		NeedsLoading: boolean;
 		IsLoaded: boolean;
-		Img: TPNGObject;
+		Img: TPortableNetworkGraphic;
 		IsMaskCreated: boolean;
 
 		Log: TKSLog;
@@ -189,7 +191,7 @@ type
 		Room: array of TKSRoom;
 
 		Tileset: array[0..255] of TKSTileset;
-		Background: array[0..255] of TPNGObject;
+		Background: array[0..255] of TPortableNetworkGraphic;
 
 		StartRoomX, StartRoomY: integer;
 		StartX, StartY: integer;
@@ -243,7 +245,7 @@ type
 		Bank: byte;
 		ID: byte;
 		Description: byte;
-		Img: TPNGObject;
+		Img: TPortableNetworkGraphic;
 
 		constructor Create(iBank: byte; iID: byte);
 		destructor Destroy(); override;
@@ -329,8 +331,7 @@ var
 
 implementation
 
-uses
-	zlib1dll;
+//Previously used unit zlib1dll that was not included in the original source replaced with Lazarus implementation
 
 
 
@@ -439,7 +440,7 @@ begin
 		poz := poz + 1;
 	end;		// while (true)
 
-	gzRead(gzf, dummy, 4);
+	gzRead(gzf, @dummy, 4);
 	// TODO: check whether dummy == CONST_HEADER_UNKNOWNCHUNK
 end;
 
@@ -514,11 +515,15 @@ end;
 
 
 
-procedure CreatePNGAlpha(Img: TPNGObject);
+//Function used to remove pink background from non-alpha png images
+procedure CreatePNGAlpha(Img: TPortableNetworkGraphic);
 var
 	x, y: integer;
 	pngal: PByteArray;
 begin
+        Exit; //*h CreatePNGAlpha commented out, not yet copatible with TPortableNetworkGraphic 
+
+        (*
 	case Img.Header.ColorType of
 		COLOR_GRAYSCALEALPHA, COLOR_RGBALPHA: ;		// nothing needed
 		COLOR_RGB, COLOR_PALETTE:
@@ -545,6 +550,7 @@ begin
 			end;		// for y
 		end;
 	end;		// case ColorType of
+        *)
 end;
 
 
@@ -597,7 +603,7 @@ procedure TKSTileset.Load(iLevelDir: string);
 var
 	fnam: string;
 begin
-	Img := TPNGObject.Create();
+	Img := TPortableNetworkGraphic.Create();
 	fnam := iLevelDir + 'Tilesets\Tileset' + IntToStr(Number) + '.png';
 	if not(FileExists(fnam)) then
 	begin
@@ -632,7 +638,9 @@ var
 	x, y: integer;
 	pngal: PByteArray;
 begin
-	if (IsMaskCreated) then Exit;
+        Exit; //*h NeedMask function commented out, not yet copatible with TPortableNetworkGraphic
+        (*
+        if (IsMaskCreated) then Exit;
 	if not(IsLoaded) then Exit;
 	CreatePNGAlpha(Img);
 
@@ -653,7 +661,8 @@ begin
 			pngal[x] := 0;
 		end;		// for x
 	end;		// for y
-	
+        *)
+
 	IsMaskCreated := True;
 end;
 
@@ -740,7 +749,7 @@ end;
 
 
 
-
+//*h Passables not yet compatible with new used structures, temporarily commented out, this might break wallswim detection and 3rd layer grass
 procedure TKSRoom.UpdatePassable();
 var
 	lay, x, y, u, v: integer;		// iterators
@@ -760,11 +769,15 @@ begin
 			ty := ((Data.Tile[3].Tile[y, x] and $7f) div 16) * 24;
 			for v := 0 to 23 do
 			begin
-				pngal := Tileset[ts].Img.AlphaScanline[ty + v];
+                                //*h Needs reimplementation
+                                (*
+                                pngal := Tileset[ts].Img.AlphaScanline[ty + v];
 				for u := 0 to 23 do
 				begin
 					Passable[x * 24 + u, y * 24 + v] := pngal[tx + u];
 				end;		// for u
+                                *)
+
 			end;		// for v
 		end;		// for y
 	end;		// for x
@@ -860,7 +873,7 @@ begin
 	for i := 0 to 255 do
 	begin
 		Tileset[i] := TKSTileset.Create(i, iLog);
-		Background[i] := TPNGObject.Create();
+		Background[i] := TPortableNetworkGraphic.Create();
 	end;
 end;
 
@@ -911,7 +924,7 @@ begin
 		Background[i].Free();
 		Tileset[i].Free();
 		Tileset[i] := TKSTileset.Create(i, Log);
-		Background[i] := TPNGObject.Create();
+		Background[i] := TPortableNetworkGraphic.Create();
 	end;
 end;
 
@@ -977,17 +990,17 @@ var
 	// gzs: TZDecompressionStream;
 begin
 	if Assigned(Log) then Log.Log(LOG_INFO, 'TKSLevel.LoadTiles()...');
-	gzf := gzOpen(PChar(FileName), 'rb');
+	gzf := gzOpen(PChar(FileName), 'r');
 	if (gzf = nil) then
 	begin
 		if Assigned(Log) then Log.Log(LOG_ERROR, 'Cannot open level tile file "' + FileName + '"!');
 		raise Exception.Create('Cannot open level tile file "' + FileName + '"!');
 	end;
 	try
-		while (gzeof(gzf) = 0) do
+		while (not gzeof(gzf)) do
 		begin
 			ReadHeader(gzf, xpos, ypos);
-			if (gzRead(gzf, rr, sizeof(rr)) <> sizeof(rr)) then break;
+			if (gzRead(gzf, @rr, sizeof(rr)) <> sizeof(rr)) then break;
 			AddRoom(xpos, ypos, @rr);
 		end;
 	finally
@@ -1357,6 +1370,16 @@ begin
 	end;
 end;
 
+//Lazarus gzip library does not contain wrappers to write string values directly, added one
+procedure gzWriteString(igzf: gzFile; istr: string);
+var
+        i: integer;
+begin
+        for i := 1 to length(istr) do
+        begin
+                gzputc(igzf,istr[i]);
+        end;
+end;
 
 
 
@@ -1367,7 +1390,7 @@ var
 	i: integer;
 begin
 	if Assigned(Log) then Log.Log(LOG_INFO, 'TKSLevel.SaveTiles()...');
-	gzf := gzOpen(PChar(FileName), 'wb');
+	gzf := gzOpen(PChar(FileName), 'w');
 	if (gzf = nil) then
 	begin
 		if Assigned(Log) then Log.Log(LOG_ERROR, 'Cannot open level tile file "' + FileName + '"!');
@@ -1381,7 +1404,7 @@ begin
 			gzWriteString(gzf, CONST_HEADER_UNKNOWNCHUNK);
 
 			// write the room data:
-			gzWrite(gzf, Room[i].Data, sizeof(Room[i].Data));
+			gzWrite(gzf, @(Room[i].Data), sizeof(Room[i].Data));
 		end;
 	finally
 		gzClose(gzf);
@@ -1612,7 +1635,7 @@ begin
 		Exit;
 	end;
 	
-	Img := TPNGObject.Create();
+	Img := TPortableNetworkGraphic.Create();
 	try
 		Img.LoadFromFile(fnam);
 		CreatePNGAlpha(Img);
@@ -1914,8 +1937,10 @@ var
 	code: integer;
 	i: integer;
 	s: string;
+	iKindTmp: string;
 begin
-	iKind := LowerCase(iKind)[1];
+	iKindTmp:= LowerCase(iKind);
+	iKind := iKindTmp[1];
 	sfrx := 'shiftxmap(' + iKind + ')=';
 	sfry := 'shiftymap(' + iKind + ')=';
 	sfx  := 'shiftxpos(' + iKind + ')=';
@@ -2105,9 +2130,12 @@ var
 	i: integer;
 	txt, vp: string;
 	iKindLC, iKindUC: char;
+	iKindLCtmp, iKindUctmp: string;
 begin
-	iKindLC := LowerCase(iKind)[1];
-	iKindUC := UpperCase(iKind)[1];
+	iKindLCtmp:= LowerCase(iKind);
+	iKindLC := iKindLCtmp[1];
+	iKindUCtmp:= UpperCase(iKind);
+	iKindUC := iKindUCtmp[1];
 	for i := EventParams.Count - 1 downto 0 do
 	begin
 		txt := AnsiLowerCase(EventParams[i]);

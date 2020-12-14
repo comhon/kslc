@@ -8,14 +8,24 @@
 
 (*
 Doing:
-======
+======	
+	+ Complete project conversion to Lazarus (topic/lazconv)
+	
 
-
-
+	
+Lazconv:
+========
+	! Passables & 3rdLayer grass (possible broken wallswim detection)
+	+ TKSRoomView: Tiles rendering (not yet implemented)
+	+ TKSObjectChooser: Add alpha channel to images in non-alpha format (magneta color)
+	+ TKSRoomView: Improve background rendering (currently disabled)
+	+ TKSTilesetView: Background rendering
+	+ JCLDebugger (currently removed)
 
 
 To do:
-======
+======	
+
 	+ Allow creation of new rooms
 	+ udlgDuplicateRooms: preview the duplication and highlight conflicts 
 	+ List shifts / warps / powerups in selected rooms
@@ -77,6 +87,9 @@ To do:
 
 Done:
 =====
+2020_12_14:
+	+ Project partially converted to Lazarus by Comhon
+
 2009_10_01:
 	! TKSLevel: remember unknown settings in world.ini (don't chew up custom objects) (thanks AA)
 

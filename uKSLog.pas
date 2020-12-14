@@ -1,6 +1,8 @@
 
 unit uKSLog;
 
+{$MODE Delphi}
+
 interface
 
 uses

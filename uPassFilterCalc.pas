@@ -1,6 +1,8 @@
 
 unit uPassFilterCalc;
 
+{$MODE Delphi}
+
 interface
 
 uses

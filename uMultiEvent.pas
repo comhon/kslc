@@ -1,6 +1,8 @@
 
 unit uMultiEvent;
 
+{$MODE Delphi}
+
 interface
 
 uses

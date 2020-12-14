@@ -1,51 +1,46 @@
 object frmMain: TfrmMain
-  Left = 317
-  Top = 167
-  Width = 967
+  Left = -1113
   Height = 600
+  Top = 6
+  Width = 967
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Knytt Stories Level Composer'
+  ClientHeight = 580
+  ClientWidth = 967
   Color = clBtnFace
   Constraints.MinHeight = 600
   Constraints.MinWidth = 900
-  Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
-  Font.Style = []
   KeyPreview = True
   Menu = mMain
-  OldCreateOrder = False
-  Position = poDefaultPosOnly
-  Scaled = False
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnMouseWheel = FormMouseWheel
   OnShow = FormShow
-  DesignSize = (
-    959
-    554)
-  PixelsPerInch = 96
-  TextHeight = 13
+  Position = poDefaultPosOnly
+  LCLVersion = '2.0.10.0'
+  Scaled = False
   object sbMain: TStatusBar
     Left = 0
-    Top = 535
-    Width = 959
-    Height = 19
-    Panels = <
+    Height = 23
+    Top = 557
+    Width = 967
+    Panels = <    
       item
         Width = 80
-      end
+      end    
       item
         Width = 250
-      end
+      end    
       item
         Width = 80
-      end
+      end    
       item
         Width = 70
-      end
+      end    
       item
         Width = 50
       end>
@@ -54,24 +49,23 @@ object frmMain: TfrmMain
   end
   object pcMain: TPageControl
     Left = 0
+    Height = 557
     Top = 0
-    Width = 959
-    Height = 535
+    Width = 967
+    TabStop = False
     ActivePage = tsTiles
     Align = alClient
     TabIndex = 0
     TabOrder = 2
-    TabStop = False
     object tsTiles: TTabSheet
       Caption = 'T&iles'
-      DesignSize = (
-        951
-        507)
+      ClientHeight = 531
+      ClientWidth = 959
       object rvMain: TKSRoomView
         Left = 0
+        Height = 290
         Top = 0
         Width = 650
-        Height = 290
         ShowNeighbors = True
         BackgroundVisible = True
         OnMouseDown = rvMainMouseDown
@@ -80,16 +74,16 @@ object frmMain: TfrmMain
       end
       object imgTileBg: TImage
         Left = 376
-        Top = 291
-        Width = 192
         Height = 24
+        Top = 287
+        Width = 192
         Anchors = [akLeft, akBottom]
       end
       object tvMainA: TKSTilesetView
         Left = 0
-        Top = 315
-        Width = 384
         Height = 192
+        Top = 311
+        Width = 384
         BgColor1 = 1721939
         BgColor2 = 1526361
         Anchors = [akLeft, akBottom]
@@ -99,17 +93,17 @@ object frmMain: TfrmMain
       end
       object imgLayers: TImage
         Left = 132
+        Height = 24
         Top = 290
         Width = 240
-        Height = 24
         OnMouseDown = imgLayersMouseDown
       end
       object tvMainB: TKSTilesetView
         Tag = 1
         Left = 386
-        Top = 315
-        Width = 384
         Height = 192
+        Top = 311
+        Width = 384
         BgColor1 = 1721939
         BgColor2 = 1526361
         Anchors = [akLeft, akBottom]
@@ -119,93 +113,94 @@ object frmMain: TfrmMain
       end
       object lTilesetA: TLabel
         Left = 0
-        Top = 291
-        Width = 126
         Height = 22
+        Top = 287
+        Width = 126
         Anchors = [akLeft, akBottom]
         AutoSize = False
         Caption = 'TilesetA: 255'
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -20
         Font.Name = 'Arial'
-        Font.Style = []
+        ParentColor = False
         ParentFont = False
         OnMouseDown = lTilesetMouseDown
       end
       object lTilesetB: TLabel
         Tag = 1
         Left = 644
-        Top = 291
-        Width = 126
         Height = 22
+        Top = 287
+        Width = 126
         Anchors = [akLeft, akBottom]
         AutoSize = False
         Caption = 'TilesetB: 255'
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -20
         Font.Name = 'Arial'
-        Font.Style = []
+        ParentColor = False
         ParentFont = False
         OnMouseDown = lTilesetMouseDown
       end
       object mvMainSmall: TKSMapView
         Left = 751
+        Height = 286
         Top = 0
         Width = 200
-        Height = 290
         MapStyle = msOriginal
         HighlightCenter = True
         AllowMultiSelect = True
         OnGoToRoom = MapGotoRoom
         OnRoomSelectionChanged = mvMainSmallRoomSelectionChanged
-        Anchors = [akLeft, akTop, akRight, akBottom]
+        Anchors = [akTop, akLeft, akRight, akBottom]
         PopupMenu = pmMap
       end
       object ocMain: TKSObjectChooser
         Left = 650
+        Height = 290
         Top = 0
         Width = 100
-        Height = 290
         Bank = 2
         Obj = 2
       end
       object imgPowerups: TImage
         Left = 4
+        Height = 24
         Top = 360
         Width = 288
-        Height = 24
         OnMouseDown = imgPowerupsMouseDown
       end
       object lPowerupSelect: TLabel
         Left = 4
+        Height = 13
         Top = 344
         Width = 205
-        Height = 13
         Caption = 'Select powerups that should be accessible:'
+        ParentColor = False
         Visible = False
       end
       object mKnyttScriptSmall: TMemo
         Left = 772
-        Top = 292
-        Width = 179
         Height = 215
+        Top = 288
+        Width = 179
         Anchors = [akLeft, akRight, akBottom]
+        OnChange = mKnyttScriptSmallChange
         ScrollBars = ssBoth
         TabOrder = 0
         WordWrap = False
-        OnChange = mKnyttScriptSmallChange
       end
     end
     object tsLargeMap: TTabSheet
       Caption = 'Large&Map'
+      ClientHeight = 531
+      ClientWidth = 959
       ImageIndex = 2
       object mvMainLarge: TKSMapView
         Left = 0
+        Height = 531
         Top = 0
-        Width = 1008
-        Height = 507
+        Width = 959
         MapStyle = msOriginal
         HighlightCenter = True
         AllowMultiSelect = True
@@ -217,40 +212,49 @@ object frmMain: TfrmMain
     end
     object tsKnyttScript: TTabSheet
       Caption = 'Knytt&Script'
+      ClientHeight = 531
+      ClientWidth = 959
       ImageIndex = 1
       object mKnyttScript: TMemo
         Left = 0
+        Height = 531
         Top = 0
-        Width = 327
-        Height = 507
+        Width = 335
         Align = alClient
-        TabOrder = 0
         OnChange = mKnyttScriptChange
+        TabOrder = 0
       end
       object sbKnyttScript: TScrollBox
-        Left = 327
+        Left = 335
+        Height = 531
         Top = 0
         Width = 624
-        Height = 507
+        HorzScrollBar.Page = 350
+        VertScrollBar.Page = 237
         Align = alRight
+        ClientHeight = 527
+        ClientWidth = 620
         TabOrder = 1
         object lTODO1: TLabel
           Left = 224
+          Height = 13
           Top = 224
           Width = 126
-          Height = 13
           Caption = 'TODO: KSManager-like UI'
+          ParentColor = False
         end
       end
     end
     object tsLog: TTabSheet
       Caption = 'Log'
+      ClientHeight = 531
+      ClientWidth = 959
       ImageIndex = 3
       object mLog: TMemo
         Left = 0
+        Height = 531
         Top = 0
-        Width = 951
-        Height = 507
+        Width = 959
         Align = alClient
         ReadOnly = True
         ScrollBars = ssBoth
@@ -260,33 +264,31 @@ object frmMain: TfrmMain
   end
   object pProgress: TPanel
     Left = 12
+    Height = 55
     Top = 120
     Width = 937
-    Height = 55
-    Anchors = [akLeft, akTop, akRight]
+    Anchors = [akTop, akLeft, akRight]
     BevelInner = bvLowered
+    ClientHeight = 55
+    ClientWidth = 937
     TabOrder = 1
     Visible = False
-    DesignSize = (
-      937
-      55)
     object lProgress: TLabel
-      Left = 4
-      Top = 4
-      Width = 929
+      Left = 2
       Height = 29
-      Anchors = [akLeft, akTop, akRight]
+      Top = 2
+      Width = 929
+      Anchors = [akTop, akLeft, akRight]
       AutoSize = False
+      ParentColor = False
       WordWrap = True
     end
     object pbMain: TProgressBar
-      Left = 4
-      Top = 35
-      Width = 929
+      Left = 2
       Height = 16
+      Top = 33
+      Width = 929
       Anchors = [akLeft, akRight, akBottom]
-      Min = 0
-      Max = 100
       TabOrder = 0
     end
   end
@@ -305,14 +307,14 @@ object frmMain: TfrmMain
     object actFileOpen: TAction
       Category = 'File'
       Caption = '&Open...'
-      ShortCut = 24655
       OnExecute = actFileOpenExecute
+      ShortCut = 24655
     end
     object actFileSave: TAction
       Category = 'File'
       Caption = '&Save'
-      ShortCut = 16467
       OnExecute = actFileSaveExecute
+      ShortCut = 16467
     end
     object actFileSaveAs: TAction
       Category = 'File'
@@ -322,8 +324,8 @@ object frmMain: TfrmMain
     object actFileExit: TAction
       Category = 'File'
       Caption = 'E&xit'
-      ShortCut = 32856
       OnExecute = actFileExitExecute
+      ShortCut = 32856
     end
     object actCheckWallSwim: TAction
       Category = 'Checks'
@@ -372,8 +374,8 @@ object frmMain: TfrmMain
     object actFileOpenInstalled: TAction
       Category = 'File'
       Caption = 'Open installed level...'
-      ShortCut = 16463
       OnExecute = actFileOpenInstalledExecute
+      ShortCut = 16463
     end
     object actFollowShiftA: TAction
       Category = 'GoTo'

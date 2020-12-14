@@ -1,6 +1,8 @@
 
 unit ufrmWallSwimList;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -99,7 +101,7 @@ uses
 
 
 
-{$R *.dfm}
+{$R *.lfm}
 
 
 

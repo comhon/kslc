@@ -1,5 +1,7 @@
 unit udlgAbout;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -19,8 +21,12 @@ uses
 
 
 type
+
+  { TdlgAbout }
+
   TdlgAbout = class(TForm)
     Label1: TLabel;
+    Label15: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -38,7 +44,7 @@ type
     Label13: TLabel;
     Label14: TLabel;
 
-		procedure tlGoToKSClick(Sender: TObject);
+    procedure tlGoToKSClick(Sender: TObject);
     procedure tlGoToSFClick(Sender: TObject);
     procedure tlGoToKSLCClick(Sender: TObject);
 	public
@@ -73,7 +79,7 @@ uses
 
 
 
-{$R *.dfm}
+{$R *.lfm}
 
 
 
@@ -81,16 +87,15 @@ uses
 
 procedure TdlgAbout.tlGoToKSClick(Sender: TObject);
 begin
-	ShellExecute(Handle, nil, 'http://nifflas.ni2.se', '', '', SW_SHOWNORMAL);
+	ShellExecute(Handle, nil, 'http://egomassive.com/ks/', '', '', SW_SHOWNORMAL);
 end;
-
 
 
 
 
 procedure TdlgAbout.tlGoToSFClick(Sender: TObject);
 begin
-	ShellExecute(Handle, nil, 'http://nifflas.ni2.se/forum/index.php', '', '', SW_SHOWNORMAL);
+	ShellExecute(Handle, nil, 'http://nifflas.lpchip.nl/', '', '', SW_SHOWNORMAL);
 end;
 
 

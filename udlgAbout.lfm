@@ -1,157 +1,171 @@
 object dlgAbout: TdlgAbout
-  Left = 294
-  Top = 103
+  Left = -657
+  Height = 389
+  Top = 97
+  Width = 409
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'About KSLC'
   ClientHeight = 389
   ClientWidth = 409
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
-  Font.Style = []
-  OldCreateOrder = False
-  DesignSize = (
-    409
-    389)
-  PixelsPerInch = 96
-  TextHeight = 13
+  LCLVersion = '2.0.10.0'
   object Label1: TLabel
     Left = 4
+    Height = 13
     Top = 4
     Width = 159
-    Height = 13
     Caption = 'Knytt Stories Level Checker'
-    Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
+    ParentColor = False
     ParentFont = False
   end
   object Label2: TLabel
     Left = 20
+    Height = 13
     Top = 24
     Width = 221
-    Height = 13
-    Caption = 'The idea was woven in Nifflas'#39' Support Forums'
+    Caption = 'The idea was woven in Nifflas'' Support Forums'
+    ParentColor = False
   end
   object Label3: TLabel
     Left = 20
-    Top = 44
-    Width = 203
     Height = 13
-    Caption = 'The programming was taken on by _Xoft(o)'
+    Top = 44
+    Width = 206
+    Caption = 'The programming was taken on by _Xoft(o),'
+    ParentColor = False
   end
   object Label4: TLabel
     Left = 20
+    Height = 13
     Top = 64
     Width = 364
-    Height = 13
-    Caption = 
-      'The constants needed were found out using a tileset by Paula (Gi' +
-      'rl from mars)'
+    Caption = 'The constants needed were found out using a tileset by Paula (Girl from mars)'
+    ParentColor = False
   end
   object Label5: TLabel
     Left = 20
-    Top = 116
-    Width = 169
     Height = 13
+    Top = 125
+    Width = 169
     Caption = 'The program is licensed under GPL:'
+    ParentColor = False
   end
   object Label6: TLabel
     Left = 36
-    Top = 136
-    Width = 104
     Height = 13
+    Top = 145
+    Width = 104
     Caption = 'You can use it for free'
+    ParentColor = False
   end
   object Label7: TLabel
     Left = 36
-    Top = 156
-    Width = 121
     Height = 13
+    Top = 165
+    Width = 121
     Caption = 'You can give it to anyone'
+    ParentColor = False
   end
   object Label8: TLabel
     Left = 36
-    Top = 176
-    Width = 116
     Height = 13
+    Top = 185
+    Width = 116
     Caption = 'You can get the sources'
+    ParentColor = False
   end
   object Label9: TLabel
     Left = 4
+    Height = 13
     Top = 208
     Width = 80
-    Height = 13
     Caption = 'Big thanks go to:'
+    ParentColor = False
   end
   object Label10: TLabel
     Left = 20
+    Height = 13
     Top = 228
     Width = 198
-    Height = 13
     Caption = 'Nifflas for creating such a wonderful game'
+    ParentColor = False
   end
   object Label11: TLabel
     Left = 20
+    Height = 13
     Top = 248
     Width = 144
-    Height = 13
     Caption = 'All the level and media authors'
+    ParentColor = False
   end
   object Label12: TLabel
     Left = 20
+    Height = 13
     Top = 268
     Width = 196
-    Height = 13
     Caption = 'Girl from mars for the Level-o-Metric tileset'
+    ParentColor = False
   end
   object Label13: TLabel
     Left = 20
+    Height = 13
     Top = 84
     Width = 306
-    Height = 13
     Caption = 'Bugs found and fixed thanks to Pie_Sniper, LPChip and Drakkan'
+    ParentColor = False
   end
   object Label14: TLabel
     Left = 20
+    Height = 13
     Top = 288
     Width = 308
-    Height = 13
     Caption = 'All the people in the forum who helped with bugs and suggestions'
+    ParentColor = False
   end
   object tlGoToKS: TButton
     Left = 4
+    Height = 25
     Top = 312
     Width = 401
-    Height = 25
     Anchors = [akLeft, akRight, akBottom]
-    Caption = 'Go to Nifflas'#39' Knytt Stories page'
-    TabOrder = 0
+    Caption = 'Go to egomassive''s Knytt Stories page'
     OnClick = tlGoToKSClick
+    TabOrder = 0
   end
   object tlGoToSF: TButton
     Left = 4
+    Height = 25
     Top = 336
     Width = 401
-    Height = 25
     Anchors = [akLeft, akRight, akBottom]
-    Caption = 'Go to Nifflas'#39' Support Forums'
-    TabOrder = 1
+    Caption = 'Go to Nifflas'' Support Forums'
     OnClick = tlGoToSFClick
+    TabOrder = 1
   end
   object tlGoToKSLC: TButton
     Left = 4
+    Height = 25
     Top = 360
     Width = 401
-    Height = 25
     Anchors = [akLeft, akRight, akBottom]
     Caption = 'Go to KSLC homepage'
-    TabOrder = 2
     OnClick = tlGoToKSLCClick
+    TabOrder = 2
+  end
+  object Label15: TLabel
+    Left = 20
+    Height = 13
+    Top = 104
+    Width = 234
+    Caption = 'Source code was migrated to Lazarus by Comhon'
+    ParentColor = False
   end
 end

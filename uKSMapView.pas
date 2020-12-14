@@ -1,6 +1,8 @@
 
 unit uKSMapView;
 
+{$MODE Delphi}
+
 interface
 
 uses

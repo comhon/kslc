@@ -1,5 +1,7 @@
 unit udlgDuplicateRooms;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -13,7 +15,7 @@ uses
 	Forms,
 	Dialogs,
 	ExtCtrls,
-	ThinIcoButton,
+	Buttons,
 	StdCtrls,
 	uKSRepresentations,
 	uRoomDuplicator,
@@ -26,8 +28,8 @@ uses
 type
 	TdlgDuplicateRooms = class(TForm)
     pTl: TPanel;
-    tlOK: TThinIcoButton;
-    tlCancel: TThinIcoButton;
+    tlOK: TSpeedButton;
+    tlCancel: TSpeedButton;
     pMap: TPanel;
     pTop: TPanel;
     pSettings: TPanel;
@@ -95,7 +97,7 @@ uses
 
 
 
-{$R *.dfm}
+{$R *.lfm}
 
 
 

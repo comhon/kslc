@@ -12,13 +12,11 @@ object dlgInstalledLevelList: TdlgInstalledLevelList
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poDefaultPosOnly
   OnKeyPress = FormKeyPress
   OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
   object pMain: TPanel
     Left = 0
     Top = 0
@@ -27,12 +25,9 @@ object dlgInstalledLevelList: TdlgInstalledLevelList
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
-    DesignSize = (
-      764
-      484)
     object lWorlds: TLabel
-      Left = 4
-      Top = 4
+      Left = 2
+      Top = 2
       Width = 89
       Height = 13
       Caption = 'Choose a level:'
@@ -44,8 +39,8 @@ object dlgInstalledLevelList: TdlgInstalledLevelList
       ParentFont = False
     end
     object lvWorld: TListView
-      Left = 8
-      Top = 24
+      Left = 6
+      Top = 22
       Width = 749
       Height = 453
       Anchors = [akLeft, akTop, akRight, akBottom]
@@ -78,18 +73,18 @@ object dlgInstalledLevelList: TdlgInstalledLevelList
     Align = alBottom
     BevelOuter = bvLowered
     TabOrder = 1
-    object tlOK: TThinIcoButton
-      Left = 1
-      Top = 1
+    object tlOK: TSpeedButton
+      Left = 0
+      Top = 0
       Width = 344
       Height = 23
       Align = alLeft
       Caption = '&OK'
       OnClick = tlOKClick
     end
-    object tlCancel: TThinIcoButton
-      Left = 345
-      Top = 1
+    object tlCancel: TSpeedButton
+      Left = 343
+      Top = 0
       Width = 418
       Height = 23
       Align = alClient

@@ -1,6 +1,8 @@
 
 unit uKSRoomView;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -11,7 +13,6 @@ uses
 	Graphics,
 	ExtCtrls,
 	Messages,
-	pngimage,
 	uVectors,
 	uKSRepresentations;
 
@@ -410,8 +411,11 @@ begin
 end;
 
 
-
-
+//Added function to simplify Delpi->Lazarus compatibility
+function Rect(aLeft,aTop,aRight,aBottom: LongInt): TRect;
+begin
+	result := TRect.Create(aLeft,aTop,aRight,aBottom);
+end;
 
 procedure TKSRoomView.Paint();
 var
@@ -577,10 +581,12 @@ end;
 
 procedure TKSRoomView.RedrawBkgImgR(t, l, b, r, xpofs, ypofs: integer; iRoom: TKSRoom);
 var
-	bkg: TPNGObject;
+	bkg: TPortableNetworkGraphic;
 	x, y: integer;
 	ypos, ymod: integer;
 begin
+	Exit; //*h Rendering background works, but it is slow
+
 	if (not(Assigned(iRoom))) then
 	begin
 		Exit;
@@ -600,7 +606,7 @@ begin
 			ymod := (y - ypofs) mod bkg.Height;
 			for x := l to r - 1 do
 			begin
-				fBkgImg[x + ypos] := bkg.Pixels[(x - xpofs) mod bkg.Width, ymod];
+				fBkgImg[x + ypos] := bkg.Canvas.Pixels[(x - xpofs) mod bkg.Width, ymod]; //*h changed to access via Canvas, might break some things
 			end;		// for y
 		end;		// for x
 	end
@@ -648,12 +654,14 @@ var
 	RoomX, RoomY: integer;
 	x, y: integer;		// coords in the tile
 	tx, ty: integer;		// tile's coords in the tileset img
-	pngal: pngimage.PByteArray;
+//*h	pngal: PByteArray; //*h Needs reimplementation
 	ts: TKSTileset;
 	ypos: integer;
 	rx24, ry24: integer;
 	dstx, dsty: integer;
 begin
+	Exit; //*h Rendering is very slow and does not work properly 
+	(*
 	if not(Assigned(iRoom)) then
 	begin
 		Exit;
@@ -710,6 +718,7 @@ begin
 			end;		// for x
 		end;		// for RoomX
 	end;		// for RoomY
+	*)
 end;
 
 
@@ -754,10 +763,12 @@ var
 	x, y: integer;
 	ypos, wid: integer;
 	RoomX, RoomY: integer;
-	pngal: pngimage.PByteArray;
+//	pngal: pngimage.PByteArray; //*h Needs reimplementation
 	rx24: integer;
 	dstx, dsty: integer;
 begin
+	Exit; //*h Rendering is very slow and does not work properly
+	(*
 	if not(Assigned(iRoom)) then
 	begin
 		// already set to transparent in parent
@@ -813,6 +824,7 @@ begin
 			end;		// for x
 		end;		// for RoomX
 	end;		// for RoomY
+	*)
 end;
 
 

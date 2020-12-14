@@ -1,5 +1,7 @@
 unit uKSObjectChooser;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -8,8 +10,7 @@ uses
 	SysUtils,
 	Classes,
 	Graphics,
-	Controls,
-	pngimage;
+	Controls;
 
 
 
@@ -21,8 +22,8 @@ type
 		fBank: integer;
 		fObj: integer;
 
-		BankImage: TPNGObject;
-		ObjImage: TPNGObject;
+		BankImage: TPortableNetworkGraphic;
+		ObjImage: TPortableNetworkGraphic;
 
 		fShouldReloadBankImage: boolean;
 		fShouldReloadObjImage: boolean;
@@ -33,7 +34,7 @@ type
 		procedure Paint(); override;
 		procedure ReloadBankImage();
 		procedure ReloadObjImage();
-		procedure ReloadImage(var Image: TPNGObject; iFileName: string); 
+		procedure ReloadImage(var Image: TPortableNetworkGraphic; iFileName: string);
 
 		procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
 
@@ -112,8 +113,8 @@ end;
 constructor TKSObjectChooser.Create(AOwner: TComponent);
 begin
 	inherited Create(AOwner);
-	BankImage := TPNGObject.Create();
-	ObjImage := TPNGObject.Create();
+	BankImage := TPortableNetworkGraphic.Create();
+	ObjImage := TPortableNetworkGraphic.Create();
 	fBank := 0;
 	fObj := 0;
 	Width := 100;
@@ -231,17 +232,17 @@ end;
 
 
 
-procedure TKSObjectChooser.ReloadImage(var Image: TPNGObject; iFileName: string);
+procedure TKSObjectChooser.ReloadImage(var Image: TPortableNetworkGraphic; iFileName: string);
 begin
 	if not(FileExists(iFileName)) then
 	begin
-		Image.Resize(1, 1);
+		Image.Clear;
 		Exit;
 	end;
 	try
 		Image.LoadFromFile(iFileName);
 	except
-		Image.Resize(1, 1);
+		Image.Clear;
 	end;
 end;
 

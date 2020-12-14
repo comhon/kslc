@@ -1,6 +1,8 @@
 
 unit uKSObjects;
 
+{$MODE Delphi}
+
 interface
 
 const

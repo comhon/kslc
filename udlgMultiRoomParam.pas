@@ -1,5 +1,7 @@
 unit udlgMultiRoomParam;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -12,7 +14,7 @@ uses
 	Controls,
 	Forms,
 	Dialogs,
-	ThinIcoButton,
+	Buttons,
 	ExtCtrls,
 	StdCtrls,
 	uVectors,
@@ -34,8 +36,8 @@ type
 		pTop: TPanel;
     pMap: TPanel;
     pTl: TPanel;
-    tlChange: TThinIcoButton;
-    tlCancel: TThinIcoButton;
+    tlChange: TSpeedButton;
+    tlCancel: TSpeedButton;
     pParam: TPanel;
     pChange: TPanel;
     Label1: TLabel;
@@ -103,7 +105,7 @@ uses ufrmMain;
 
 
 
-{$R *.dfm}
+{$R *.lfm}
 
 
 

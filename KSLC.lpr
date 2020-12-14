@@ -1,13 +1,15 @@
 
 program KSLC;
 
+{$MODE Delphi}
+
 {%File 'Todo.txt'}
 
 uses
 	Windows,
 	Forms,
 	Dialogs,
-	Controls,
+	Controls, Interfaces,
 	SysUtils,
 	Classes,
 	ShellAPI,
@@ -35,9 +37,9 @@ uses
   udlgInstalledLevelList in 'udlgInstalledLevelList.pas' {dlgInstalledLevel},
   ufrmShiftsToHere in 'ufrmShiftsToHere.pas' {frmShiftsToHere},
   uMultiEvent in 'uMultiEvent.pas',
-  uKSRoomView in 'uKSRoomView.pas',
+  uKSRoomView in 'uKSRoomView.pas'{//*h JCL not jet included in converted project,
   JclDebug in '..\..\Lib\D6\JCL\source\jclDebug.pas',
-  JclHookExcept in '..\..\Lib\D6\JCL\source\JclHookExcept.pas';
+  JclHookExcept in '..\..\Lib\D6\JCL\source\JclHookExcept.pas'};
 
 {$R *.res}
 
@@ -53,6 +55,7 @@ var
 
 
 
+        {//*h JCL not jet included in converted project
 
 // debugging functions using JCL are copied over from SiteFlow
 
@@ -145,20 +148,24 @@ begin
 		gProcessingException := false;
 	end;
 end;
-
+        //}
 
 
 
 
 begin
 	Application.Initialize();
+        InitializeSettings;
+
 	gLog := TKSLog.Create(LOG_INFO);
 	gLog.Log(LOG_INFO, 'Initializing');
 
+        {//*h JCL not jet included in converted project
 	// initialize JCL debugging:
 	JclStackTrackingOptions := [stStack, stAllModules, stExceptFrame];
 	JclHookExceptions();
 	JclAddExceptNotifier(KSLCExceptionNotify);
+        }
 
 	Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmViewPowerups, frmViewPowerups);
@@ -229,4 +236,5 @@ begin
 
 	Application.Run();
 	gSettings.GetForms();
+        FinalizeSettings;
 end.

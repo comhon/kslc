@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <PathDelim Value="\"/>
+    <Name Value="kslccomponents"/>
+    <Type Value="RunAndDesignTime"/>
+    <Author Value="Comhon"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <License Value="GPL"/>
+    <Version Minor="3" Release="17"/>
+    <Files Count="9">
+      <Item1>
+        <Filename Value="uKSLog.pas"/>
+        <UnitName Value="uKSLog"/>
+      </Item1>
+      <Item2>
+        <Filename Value="uKSMapView.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="uKSMapView"/>
+      </Item2>
+      <Item3>
+        <Filename Value="uKSObjectChooser.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="uKSObjectChooser"/>
+      </Item3>
+      <Item4>
+        <Filename Value="uKSObjects.pas"/>
+        <UnitName Value="uKSObjects"/>
+      </Item4>
+      <Item5>
+        <Filename Value="uKSObjPass.pas"/>
+        <UnitName Value="uKSObjPass"/>
+      </Item5>
+      <Item6>
+        <Filename Value="uKSRepresentations.pas"/>
+        <UnitName Value="uKSRepresentations"/>
+      </Item6>
+      <Item7>
+        <Filename Value="uKSRoomView.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="uKSRoomView"/>
+      </Item7>
+      <Item8>
+        <Filename Value="uKSTilesetView.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="uKSTilesetView"/>
+      </Item8>
+      <Item9>
+        <Filename Value="uVectors.pas"/>
+        <UnitName Value="uVectors"/>
+      </Item9>
+    </Files>
+    <RequiredPkgs Count="2">
+      <Item1>
+        <PackageName Value="LCL"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="FCL"/>
+      </Item2>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

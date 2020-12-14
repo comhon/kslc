@@ -1,5 +1,7 @@
 unit ufrmShiftList;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -76,7 +78,7 @@ uses
 
 
 
-{$R *.dfm}
+{$R *.lfm}
 
 
 

@@ -12,6 +12,8 @@ This way we can use a TKSShift reference in TListItem's data.
 
 unit ufrmShiftsToHere;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -72,7 +74,7 @@ implementation
 
 uses ufrmMain;
 
-{$R *.dfm}
+{$R *.lfm}
 
 
 

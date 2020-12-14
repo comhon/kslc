@@ -1,5 +1,7 @@
 unit udlgInstalledLevelList;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -16,7 +18,7 @@ uses
 	ComCtrls,
 	StdCtrls,
 	Contnrs,
-	ThinIcoButton,
+	Buttons,
 	uSettings;
 
 
@@ -50,8 +52,8 @@ type
 		pTl: TPanel;
 		lWorlds: TLabel;
 		lvWorld: TListView;
-		tlOK: TThinIcoButton;
-		tlCancel: TThinIcoButton;
+		tlOK: TSpeedButton;
+		tlCancel: TSpeedButton;
 		procedure tlCancelClick(Sender: TObject);
 		procedure tlOKClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -122,13 +124,13 @@ type
 implementation
 
 uses
-	ukSRepresentations;
+	uKSRepresentations;
 
 
 
 	
 
-{$R *.dfm}
+{$R *.lfm}
 
 
 
@@ -145,7 +147,7 @@ begin
 		Caption := iCaption;
 	end;
 	tlOK.Glyph.LoadFromResourceName(HInstance, 'BBOK');
-	tlCancel.Glyph.LoadFromResourceName(HInstance, 'BBCancel');
+	tlCancel.Glyph.LoadFromResourceName(HInstance, 'BBCANCEL');
 end;
 
 
