@@ -18,7 +18,8 @@ uses
 	uMultiEvent,
 	uKSObjects,
 	uKSObjPass,
-	uKSLog;
+	uKSLog,
+	IntfGraphics;
 
 
 
@@ -109,9 +110,11 @@ type
 		NeedsLoading: boolean;
 		IsLoaded: boolean;
 		Img: TPortableNetworkGraphic;
+		ImgLaz: TLazIntfImage;
 		IsMaskCreated: boolean;
 
 		Log: TKSLog;
+		TileCache: array[0..15,0..8] of TLazIntfImage;
 
 		// TODO: transparency preparations?
 
@@ -192,6 +195,7 @@ type
 
 		Tileset: array[0..255] of TKSTileset;
 		Background: array[0..255] of TPortableNetworkGraphic;
+		BackgroundIntF: array[0..255] of TLazIntfImage;
 
 		StartRoomX, StartRoomY: integer;
 		StartX, StartY: integer;
@@ -246,6 +250,7 @@ type
 		ID: byte;
 		Description: byte;
 		Img: TPortableNetworkGraphic;
+		IntfImg: TLazIntfImage;
 
 		constructor Create(iBank: byte; iID: byte);
 		destructor Destroy(); override;
@@ -569,6 +574,7 @@ begin
 	NeedsLoading := false;
 	Img := nil;
 	IsMaskCreated := false;
+	Clear();
 end;
 
 
@@ -586,7 +592,18 @@ end;
 
 
 procedure TKSTileset.Clear();
+var
+	i,j: byte;
 begin
+	for i:=0 to 15 do
+	begin
+		for j:=0 to 7 do
+		begin
+			if Assigned(TileCache[i,j]) then TileCache[i,j].Free;
+			TileCache[i,j]:=nil;
+		end;
+	end;
+
 	if (IsLoaded) then
 	begin
 		Img.Free();
@@ -604,6 +621,7 @@ var
 	fnam: string;
 begin
 	Img := TPortableNetworkGraphic.Create();
+	ImgLaz:=TLazIntfImage.Create(0,0);
 	fnam := iLevelDir + 'Tilesets\Tileset' + IntToStr(Number) + '.png';
 	if not(FileExists(fnam)) then
 	begin
@@ -612,6 +630,7 @@ begin
 	if Assigned(Log) then Log.Log(LOG_INFO, 'Loading tileset #' + IntToStr(Number) + ' from file "' + fnam + '"');
 	try
 		Img.LoadFromFile(fnam);
+		ImgLaz:=Img.CreateIntfImage()
 	except
 		on e: Exception do
 		begin
@@ -899,6 +918,7 @@ begin
 	for i := 0 to 255 do
 	begin
 		Background[i].Free();
+		BackgroundIntf[i].Free();
 		Tileset[i].Free();
 	end;
 	inherited Destroy();
@@ -1234,6 +1254,7 @@ begin
 	if Assigned(Log) then Log.Log(LOG_INFO, 'Loading background #' + IntToStr(iNumber) + ' from file "' + fnam + '"');
 	try
 		Background[iNumber].LoadFromFile(fnam);
+		BackgroundIntf[iNumber]:=Background[iNumber].CreateIntfImage;
 	except
 		on e: Exception do
 		begin
@@ -1603,6 +1624,7 @@ begin
 	// TODO: description loading
 	// Description := TryLoadDescription();
 	Img := nil;
+	IntfImg := nil;
 end;
 
 
@@ -1613,6 +1635,8 @@ destructor TKSObject.Destroy();
 begin
 	if Assigned(Img) then Img.Free();
 	Img := nil;
+	if Assigned(IntfImg) then IntfImg.Free();
+	IntfImg := nil;
 	inherited Destroy();
 end;
 

@@ -46,7 +46,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="31">
+    <Units Count="32">
       <Unit0>
         <Filename Value="KSLC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -186,6 +186,11 @@
         <Filename Value="BBOK.bmp"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
+      <Unit31>
+        <Filename Value="uKSRender.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uKSRender"/>
+      </Unit31>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
