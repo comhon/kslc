@@ -12,7 +12,9 @@ uses
 	Controls,
 	Graphics,
 	uKSRepresentations,
-	uVectors;
+	uVectors,
+	uKSRender,
+	IntfGraphics;
 
 
 
@@ -33,7 +35,9 @@ type
 		fOnMouseEnter: TNotifyEvent;
 
 		bmpBackground: TBitmap;
+		intfTileset: TLazIntfImage;
 		bmpTileset: TBitmap;
+		intfBackground: TLazIntfImage;
 
 		procedure fSetTileset(iTileset: TKSTileset);
 		procedure fSetBgColor1(iVal: TColor);
@@ -151,11 +155,15 @@ begin
 	bmpTileset.Width := Width;
 	bmpTileset.Height := Height;
 
+	intfBackground:=nil;
+
 	// background buffer:
 	bmpBackground := TBitmap.Create();
 	bmpBackground.PixelFormat := pf32Bit;
 	bmpBackground.Width := Width;
 	bmpBackground.Height := Height;
+
+	intfTileset:=nil;
 
 	fBgColor1 := $1A4653;
 	BgColor2 := $174A59;
@@ -205,8 +213,10 @@ procedure TKSTilesetView.RedrawTileset();
 begin
 	if (Assigned(fTileset) and Assigned(fTileset.Img)) then
 	begin
-		bmpTileset.Canvas.Draw(0, 0, bmpBackground);
-		bmpTileset.Canvas.Draw(0, 0, fTileset.Img);
+		intfBackground:=EmptyIntfImage(fTileset.ImgLaz.Width,fTileset.ImgLaz.Height,True);
+		intfBackground.CopyPixels(bmpBackground.CreateIntfImage,0,0);
+		WriteLayer(intfBackground,fTileset.ImgLaz,TPoint.Create(0,0));
+		bmpTileset.LoadFromIntfImage(intfBackground);
 	end;
 	fShouldRedrawTileset := false;
 end;
@@ -277,11 +287,13 @@ begin
 		end;
 	end;		// for y - ScanLine[]
 
+	(*
 	if (Assigned(fTileset) and Assigned(fTileset.Img)) then
 	begin
 		bmpTileset.Canvas.Draw(0, 0, bmpBackground);
 		bmpTileset.Canvas.Draw(0, 0, fTileset.Img);
 	end;
+	*)
 
 	Invalidate();
 end;

@@ -7,13 +7,14 @@ interface
 uses
   Classes, Graphics, SysUtils, IntfGraphics,graphtype, lazcanvas, LCLType, fpImage;
 
-procedure ClearIntfImage(var AIntfImage: TLazIntfImage; aWidth, aheight: Integer);
-function EmptyIntfImage(AWidth, AHeight: LongInt): TLazIntfImage;
+procedure ClearIntfImage(var AIntfImage: TLazIntfImage; aWidth, aheight: Integer; AClearMem:boolean=false);
+function EmptyIntfImage(AWidth, AHeight: LongInt;AClearMem:boolean=false): TLazIntfImage;
 function CreateRegion(aSource: TLazIntfImage; r: TRect): TLazIntfImage;
 procedure SaveAsPng(AImg: TLazIntfImage; aFileName: String);
 procedure AddLayer(aTarget: TBitmap; aSource: TlazIntfImage; Pos: TPoint);
 procedure WriteLayer(var aTarget: TLazIntfImage; aSource: TlazIntfImage; Pos: TPoint);
 function CreateIntfImage(APng: TPortableNetworkGraphic): TLazIntfImage;
+procedure DrawIntfImage(AImage: TLazIntfImage; Canvas: TCanvas; aPosition: TPoint);
 
 implementation
 
@@ -96,22 +97,22 @@ begin
   end;
 end;
 
-function EmptyIntfImage(AWidth, AHeight: LongInt): TLazIntfImage;
+function EmptyIntfImage(AWidth, AHeight: LongInt; AClearMem: boolean = false): TLazIntfImage;
 var
   lRawImage: TRawImage;
 begin
   lRawImage.Init;
   lRawImage.Description.Init_BPP32_B8G8R8A8_BIO_TTB(aWidth,aHeight);
-  lRawImage.CreateData(false);
+  lRawImage.CreateData(AClearMem);
   result := TLazIntfImage.Create(0,0);
   result.SetRawImage(lRawImage);
 end;
 
-procedure ClearIntfImage(var AIntfImage: TLazIntfImage; aWidth, aheight: Integer);
+procedure ClearIntfImage(var AIntfImage: TLazIntfImage; aWidth, aheight: Integer; AClearMem: boolean = false);
 var
   TempIntfImg: TLazIntfImage;
 begin
-  TempIntfImg:=EmptyIntfImage(aWidth,aHeight);
+  TempIntfImg:=EmptyIntfImage(aWidth,aHeight,AClearMem);
   AIntfImage.CopyPixels(TempIntfImg,0,0);
   TempIntfImg.Free;
 end;
@@ -131,6 +132,19 @@ begin
   png.LoadFromIntfImage(AImg);
   png.SaveToFile(aFileName);
   png.Free;
+end;
+
+procedure DrawIntfImage(AImage: TLazIntfImage; Canvas: TCanvas; aPosition: TPoint);
+var
+  TempBitmap: TBitmap;
+  ImgHandle,ImgMaskHandle: HBitmap;
+begin
+  if AImage = nil then Exit;
+  TempBitmap:=TBitmap.Create;
+  AImage.CreateBitmaps(ImgHandle,ImgMaskHandle,false);
+  TempBitmap.Handle:=ImgHandle;
+  TempBitmap.MaskHandle:=ImgMaskHandle;
+  Canvas.Draw(aPosition.X,aPosition.Y,TempBitmap);
 end;
 
 end.
