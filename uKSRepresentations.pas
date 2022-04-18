@@ -19,7 +19,8 @@ uses
 	uKSObjects,
 	uKSObjPass,
 	uKSLog,
-	IntfGraphics;
+	IntfGraphics,
+	uKSRender;
 
 
 
@@ -196,6 +197,7 @@ type
 		Tileset: array[0..255] of TKSTileset;
 		Background: array[0..255] of TPortableNetworkGraphic;
 		BackgroundIntF: array[0..255] of TLazIntfImage;
+		BackgroundFillIntf: array[0..255] of TLazIntfImage;
 
 		StartRoomX, StartRoomY: integer;
 		StartX, StartY: integer;
@@ -630,7 +632,7 @@ begin
 	if Assigned(Log) then Log.Log(LOG_INFO, 'Loading tileset #' + IntToStr(Number) + ' from file "' + fnam + '"');
 	try
 		Img.LoadFromFile(fnam);
-		ImgLaz:=Img.CreateIntfImage()
+		ImgLaz:=CreateIntfImage(Img);
 	except
 		on e: Exception do
 		begin
@@ -919,6 +921,7 @@ begin
 	begin
 		Background[i].Free();
 		BackgroundIntf[i].Free();
+		BackgroundFillIntf[i].Free();
 		Tileset[i].Free();
 	end;
 	inherited Destroy();

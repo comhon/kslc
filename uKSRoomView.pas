@@ -73,7 +73,7 @@ type
 		procedure RedrawLayImgTile (iLayer: integer);		// updates fLayImg for tile layers
 		procedure RedrawLayImgObj  (iLayer: integer);		// updates fLayImg for obj layers
 		procedure RedrawLayImgPass ();		// updates fLayImg[8] for passability
-		procedure RedrawBkgImgR    (t, l, b, r, tx, lx,bx,rx: integer; iRoom: TKSRoom);
+		procedure RedrawBkgImgRX   (t, l, b, r: integer; region:TRect; iRoom: TKSRoom);
 		procedure RedrawLayImgTileR(t, l, b, r, xpofs, ypofs: integer; iRoom: TKSRoom; iLayer: integer);
 		procedure RedrawLayImgObjR (t, l, b, r, xpofs, ypofs: integer; iRoom: TKSRoom; iLayer: integer);
 		procedure RedrawLayImgPassR(t, l, b, r, xpofs, ypofs: integer; iRoom: TKSRoom);
@@ -460,9 +460,14 @@ begin
 		bmp.Width := fLayWid;
 		bmp.Height := fLayHei;
 		bmp.PixelFormat := pf32Bit;
-		bmp.LoadFromIntfImage(fRoomIntfImg);
 
-		bmp.Canvas.Brush.Color := $ffffff;
+		bmp.Canvas.Brush.Color := Self.Color;
+		bmp.Canvas.Brush.Style := bsSolid;
+		bmp.Canvas.FillRect(Rect(0, 0, 650, 290));
+
+		bmp.Canvas.Draw(0,0,CreateMaskedBitmap(fRoomIntfImg));
+
+		bmp.Canvas.Brush.Color := Self.Color;
 		bmp.Canvas.Brush.Style := bsSolid;
 		bmp.Canvas.FillRect(Rect(0, 0, 24, 24));
 		bmp.Canvas.FillRect(Rect(626, 0, 650, 24));
@@ -472,7 +477,7 @@ begin
 		// draw missing rooms:
 		bmp.Canvas.Pen.Color := 0;
 		bmp.Canvas.Pen.Style := psSolid;
-		bmp.Canvas.Brush.Color := 0;
+//		bmp.Canvas.Brush.Color := 0;
 		if not(Assigned(fRoom)) then
 		begin
 			CrossOutBox(bmp.Canvas, 0, 0, 289, 649);
@@ -575,19 +580,19 @@ begin  //procedure RedrawBkgImgR    (top, left, bottom, right, xpofs, ypofs: int
 
         if (fShowNeighbors) then
 	begin
-                RedrawBkgImgR(25, 25, 265, 625, 0, 0, -1, -1, fRoom);
+		RedrawBkgImgRX(25, 25, 265, 625, TRect.Create(0, 0, 600, 240), fRoom);
 
                 if (Assigned(fRoom)) then
 		begin
-			RedrawBkgImgR( 25,   0, 265,  24,   0, -2, -1, -1, fRoom.RoomLeft);
-			RedrawBkgImgR(  0,  25,  24, 625, 216, 0, -1, -1, fRoom.RoomUp);
-			RedrawBkgImgR( 25, 626, 265, 649,   0, 0, -1, -1, fRoom.RoomRight);
-			RedrawBkgImgR(266,  25, 290, 625,   0, 0,  24,-1, fRoom.RoomDown);
+			RedrawBkgImgRX( 25,   0, 265,  24, TRect.Create(576,0,600,240), fRoom.RoomLeft);
+			RedrawBkgImgRX(  0,  25,  24, 625, TRect.Create(0,216,600,240), fRoom.RoomUp);
+			RedrawBkgImgRX( 25, 626, 265, 649, TRect.Create(0,0,24,240), fRoom.RoomRight);
+			RedrawBkgImgRX(266,  25, 290, 625, TRect.Create(0,0,600,24), fRoom.RoomDown);
 		end;
 	end
 	else
 	begin
-		RedrawBkgImgR(0, 0, 240, 600, 0, 0, 240,24, fRoom);
+		RedrawBkgImgRX(0, 0, 240, 600, TRect.Create(0, 0, 600, 240), fRoom);
 	end;
 end;
 
@@ -608,23 +613,14 @@ begin
   end;
 end;
 
-procedure TKSRoomView.RedrawBkgImgR(t, l, b, r, tx,lx,bx,rx: integer; iRoom: TKSRoom);
+procedure TKSRoomView.RedrawBkgImgRX(t, l, b, r: integer; region: TRect; iRoom: TKSRoom);
 var
 	bkg: TPortableNetworkGraphic;
-	x, y: integer;
-	ypos, ymod: integer;
-	bg: TLazIntfImage;
-	left, top: integer;
-	bottom, right: integer;
-	tile,tile2: TLazIntfImage;
-	abmp: TBitmap;
+	bkgIntf: TLazIntfImage;
+	bkgFill: TLazIntfImage;
+	y: integer;
+	tile: TLazIntfImage;
 begin
-
-	left:=l;
-	top:=t;
-	bottom:=b;
-	right:=r;
-
 	if (not(Assigned(iRoom))) then
 	begin
 		Exit;
@@ -636,25 +632,24 @@ begin
 		fLevel.LoadBackground(iRoom.Data.Background);
 	end;
 
-        bg := fLevel.BackgroundIntf[iRoom.Data.Background];
+        bkgIntf := fLevel.BackgroundIntf[iRoom.Data.Background];
 
-        if bx=-1 then bx:=bkg.Height;
-        if rx=-1 then rx:=bkg.Width;
-        if lx=-2 then lx:=bkg.Width-24;
+        bkgFill := fLevel.BackgroundFillIntF[iRoom.Data.Background];
 
-        aBmp:=TBitmap.Create;
-        aBmp.Width:=rx-lx;
-        aBmp.Height:=bx-tx;
-
-        tile:=CreateRegion(bg,TRect.Create(lx,tx,rx,bx));
-
-        for y:=0 to ((right)div abmp.Width)-1 do
+        if not (Assigned(bkgFill)) then
         begin
-          fBkgIntfImg.CopyPixels(tile,left+y*aBmp.Width,Top,True);
+                bkgFill:=EmptyIntfImage(600, 240,True);
+
+                for y:=0 to ((600)div bkg.Width)-1 do
+                begin
+                  bkgFill.CopyPixels(bkgIntf,y*bkg.Width,0,True);
+                end;
 
         end;
 
-        //SaveAsPng(fBkgIntfImg,'D:\background.png');
+        tile:=CreateRegion(bkgFill,region);
+
+        fBkgIntfImg.CopyPixels(tile,l,t,True);
 
 end;
 
@@ -751,7 +746,7 @@ begin
 		end;		// for RoomX
 	end;		// for RoomY
 
-	SaveAsPng(fLayIntfImg[iLayer],'D:\Debug\layer'+IntToStr(iLayer)+'.png');
+//	SaveAsPng(fLayIntfImg[iLayer],'D:\Debug\layer'+IntToStr(iLayer)+'.png');
 
 end;
 
@@ -845,7 +840,7 @@ begin
 		end;		// for RoomX
 	end;		// for RoomY
 
-	SaveAsPng(fLayIntfImg[iLayer],'D:\Debug\layer'+IntToStr(iLayer)+'.png');
+	//SaveAsPng(fLayIntfImg[iLayer],'D:\Debug\layer'+IntToStr(iLayer)+'.png');
 
 end;
 
@@ -946,8 +941,8 @@ begin
 
 	if (fBkgVis) then
 	begin
-		fRoomIntfImg.CopyPixels(fBkgIntfImg,0,0);
-		SaveAsPng(fRoomIntfImg,'D:\Debug\roomwritten.png');
+		WriteLayer(fRoomIntfImg,fBkgIntfImg,TPoint.Create(0,0));
+		//SaveAsPng(fRoomIntfImg,'D:\Debug\roomwritten.png');
 	end
 	else
 	begin
@@ -969,7 +964,7 @@ begin
 
 		WriteLayer(fRoomIntfImg,fLayIntfImg[LayerNum],TPoint.Create(0,0));
 
-		SaveAsPng(fRoomIntfImg,'D:\Debug\roomwritten'+IntToStr(i)+'.png');
+		//SaveAsPng(fRoomIntfImg,'D:\Debug\roomwritten'+IntToStr(i)+'.png');
 		(*
 		for j := 0 to ArrSize - 1 do
 		begin
@@ -991,7 +986,7 @@ begin
 	end;
         *)
 
-        SaveAsPng(fRoomIntfImg,'D:\Debug\Screen.png');
+        //SaveAsPng(fRoomIntfImg,'D:\Debug\Screen.png');
 
 	fShouldRecompose := false;
 end;
@@ -1002,7 +997,7 @@ end;
 
 procedure TKSRoomView.CrossOutBox(iCanvas: TCanvas; t, l, b, r: integer);
 begin
-	iCanvas.Brush.Color := $ffffff;
+	iCanvas.Brush.Color := Self.Color;//$ffffff;
 	iCanvas.FillRect(Rect(l, t, r + 1, b + 1));
 	iCanvas.Brush.Color := 0;
 	iCanvas.FrameRect(Rect(l, t, r + 1, b + 1));

@@ -15,6 +15,7 @@ procedure AddLayer(aTarget: TBitmap; aSource: TlazIntfImage; Pos: TPoint);
 procedure WriteLayer(var aTarget: TLazIntfImage; aSource: TlazIntfImage; Pos: TPoint);
 function CreateIntfImage(APng: TPortableNetworkGraphic): TLazIntfImage;
 procedure DrawIntfImage(AImage: TLazIntfImage; Canvas: TCanvas; aPosition: TPoint);
+function CreateMaskedBitmap(AImage: TLazIntfImage): TBitmap;
 
 implementation
 
@@ -134,17 +135,32 @@ begin
   png.Free;
 end;
 
-procedure DrawIntfImage(AImage: TLazIntfImage; Canvas: TCanvas; aPosition: TPoint);
+function CreateMaskedBitmap(AImage: TLazIntfImage): TBitmap;
 var
   TempBitmap: TBitmap;
   ImgHandle,ImgMaskHandle: HBitmap;
 begin
-  if AImage = nil then Exit;
+  if AImage = nil then
+  begin
+    result:=nil;
+    Exit;
+  end;
+
   TempBitmap:=TBitmap.Create;
   AImage.CreateBitmaps(ImgHandle,ImgMaskHandle,false);
   TempBitmap.Handle:=ImgHandle;
   TempBitmap.MaskHandle:=ImgMaskHandle;
+
+  result:=TempBitmap;
+end;
+
+procedure DrawIntfImage(AImage: TLazIntfImage; Canvas: TCanvas; aPosition: TPoint);
+var
+  TempBitmap: TBitmap;
+begin
+  TempBitmap:=CreateMaskedBitmap(aImage);
   Canvas.Draw(aPosition.X,aPosition.Y,TempBitmap);
+  TempBitmap.Free;
 end;
 
 end.
