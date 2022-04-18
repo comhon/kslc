@@ -13,7 +13,7 @@
       </SearchPaths>
     </CompilerOptions>
     <License Value="GPL"/>
-    <Version Minor="3" Release="17"/>
+    <Version Minor="3" Release="18"/>
     <Files Count="9">
       <Item1>
         <Filename Value="uKSLog.pas"/>
