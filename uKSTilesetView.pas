@@ -175,7 +175,6 @@ end;
 
 destructor TKSTilesetView.Destroy();
 begin
-	Clear();
 	intfBackground.Free();
 	inherited Destroy();
 end;
