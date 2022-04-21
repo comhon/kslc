@@ -35,9 +35,9 @@ type
 		fOnMouseEnter: TNotifyEvent;
 
 		bmpBackground: TBitmap;
-		intfTileset: TLazIntfImage;
+		intfTileset: TKSIntfImage;
 		bmpTileset: TBitmap;
-		intfBackground: TLazIntfImage;
+		intfBackground: TKSIntfImage;
 
 		procedure fSetTileset(iTileset: TKSTileset);
 		procedure fSetBgColor1(iVal: TColor);
@@ -155,7 +155,7 @@ begin
 	bmpTileset.Width := Width;
 	bmpTileset.Height := Height;
 
-	intfBackground:=nil;
+	intfBackground:=TKSIntfImage.Create(Width,Height);
 
 	// background buffer:
 	bmpBackground := TBitmap.Create();
@@ -176,6 +176,7 @@ end;
 destructor TKSTilesetView.Destroy();
 begin
 	Clear();
+	intfBackground.Free();
 	inherited Destroy();
 end;
 
@@ -187,6 +188,7 @@ procedure TKSTilesetView.Clear();
 begin
 	fNumVectors := 0;
 	fCapVectors := 0;
+	intfTileset.Clear();
 	SetLength(fVector, 0);
 end;
 
@@ -213,10 +215,10 @@ procedure TKSTilesetView.RedrawTileset();
 begin
 	if (Assigned(fTileset) and Assigned(fTileset.Img)) then
 	begin
-		intfBackground:=EmptyIntfImage(fTileset.ImgLaz.Width,fTileset.ImgLaz.Height,True);
-		intfBackground.CopyPixels(bmpBackground.CreateIntfImage,0,0);
-		WriteLayer(intfBackground,fTileset.ImgLaz,TPoint.Create(0,0));
-		bmpTileset.LoadFromIntfImage(intfBackground);
+		intfBackground.Clear();
+		intfBackground.Obj.CopyPixels(bmpBackground.CreateIntfImage,0,0);
+		WriteLayer(intfBackground.Obj,fTileset.ImgLaz,TPoint.Create(0,0));
+		bmpTileset.LoadFromIntfImage(intfBackground.Obj);
 	end;
 	fShouldRedrawTileset := false;
 end;

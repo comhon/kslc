@@ -7,6 +7,27 @@ interface
 uses
   Classes, Graphics, SysUtils, IntfGraphics,graphtype, lazcanvas, LCLType, fpImage;
 
+type
+
+  { TKSIntfImage }
+
+  TKSIntfImage = class
+  private
+    FWidth, FHeight: Integer;
+    FEmptyIntfImg: TLazIntfImage;
+  public
+    Obj: TLazIntfImage;
+
+    constructor Create(Width, Height: Integer); overload;
+    constructor Create(var PngImage: TPortableNetworkGraphic); overload;
+    destructor Destroy; override;
+    procedure Clear;
+
+    property Width: integer read FWidth;
+    property Height: integer read FHeight;
+
+  end;
+
 procedure ClearIntfImage(var AIntfImage: TLazIntfImage; aWidth, aheight: Integer; AClearMem:boolean=false);
 function EmptyIntfImage(AWidth, AHeight: LongInt;AClearMem:boolean=false): TLazIntfImage;
 function CreateRegion(aSource: TLazIntfImage; r: TRect): TLazIntfImage;
@@ -161,6 +182,40 @@ begin
   TempBitmap:=CreateMaskedBitmap(aImage);
   Canvas.Draw(aPosition.X,aPosition.Y,TempBitmap);
   TempBitmap.Free;
+end;
+
+{ TKSIntfImage }
+
+constructor TKSIntfImage.Create(Width, Height: Integer);
+begin
+  FWidth:=Width;
+  FHeight:=Height;
+  Obj:=EmptyIntfImage(Width,Height,False);
+
+end;
+
+constructor TKSIntfImage.Create(var PngImage: TPortableNetworkGraphic);
+begin
+  FWidth:=PNGImage.Width;
+  FHeight:=PNGImage.Height;
+  Obj:=CreateIntfImage(PngImage);
+  FEmptyIntfImg:=nil;
+end;
+
+destructor TKSIntfImage.Destroy;
+begin
+  Obj.Free;
+  FEmptyIntfImg.Free;
+end;
+
+procedure TKSIntfImage.Clear;
+begin
+  if not Assigned(FEmptyIntfImg) then
+  begin
+    FEmptyIntfImg:=EmptyIntfImage(FWidth,FHeight,False);
+  end;
+
+  Obj.CopyPixels(FEmptyIntfImg,0,0,True);
 end;
 
 end.

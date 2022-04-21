@@ -35,12 +35,12 @@ type
 		fLayWid: integer;
 		fLayHei: integer;
 		fBkgImg: array of integer;		// fLayWid * fLayHei
-		fBkgIntfImg: TLazIntfImage;		// fLayWid * fLayHei
+		fBkgIntfImg: TKSIntfImage;		// fLayWid * fLayHei
 		fBkgBmp: TBitmap;
 		fLayImg: array[0..8] of array of integer;		// array of int32 pixels, each counts fLayWid * fLayHei items, precalced images of the layer
-		fLayIntfImg: array[0..8] of TLazIntfImage;
+		fLayIntfImg: array[0..8] of TKSIntfImage;
 		fRoomImg: array of integer;		// fLayWid * fLayHei
-		fRoomIntfImg: TLazIntfImage;		// fLayWid * fLayHei
+		fRoomIntfImg: TKSIntfImage;		// fLayWid * fLayHei
 		fLayVis: array[0..8] of boolean;
 		fBkgVis: boolean;
 		fBkgColor: integer;
@@ -407,14 +407,14 @@ begin
 	for i := 0 to 8 do
 	begin
 		SetLength(fLayImg[i], ArrSize);
-		fLayIntfImg[i]:=EmptyIntfImage(flayWid,fLayHei);
+		fLayIntfImg[i]:=TKSIntfImage.Create(flayWid,fLayHei);
 	end;
 
 	SetLength(fBkgImg, ArrSize);
-	fBkgIntfImg:=EmptyIntfImage(fLayWid,fLayHei);
+	fBkgIntfImg:=TKSIntfImage.Create(fLayWid,fLayHei);
 
 	SetLength(fRoomImg, ArrSize);
-	fRoomIntfImg:=EmptyIntfImage(fLayWid,fLayHei);
+	fRoomIntfImg:=TKSIntfImage.Create(fLayWid,fLayHei);
 
 	Self.Constraints.MaxHeight := fLayHei;
 	Self.Constraints.MinHeight := fLayHei;
@@ -465,7 +465,7 @@ begin
 		bmp.Canvas.Brush.Style := bsSolid;
 		bmp.Canvas.FillRect(Rect(0, 0, 650, 290));
 
-		bmp.Canvas.Draw(0,0,CreateMaskedBitmap(fRoomIntfImg));
+		bmp.Canvas.Draw(0,0,CreateMaskedBitmap(fRoomIntfImg.Obj));
 
 		bmp.Canvas.Brush.Color := Self.Color;
 		bmp.Canvas.Brush.Style := bsSolid;
@@ -576,7 +576,7 @@ end;
 
 procedure TKSRoomView.RedrawBkgImg();
 begin  //procedure RedrawBkgImgR    (top, left, bottom, right, xpofs, ypofs: integer; iRoom: TKSRoom);
-        fBkgIntfImg:=EmptyIntfImage(fLayWid,fLayHei);
+        fBkgIntfImg.Clear;
 
         if (fShowNeighbors) then
 	begin
@@ -649,7 +649,7 @@ begin
 
         tile:=CreateRegion(bkgFill,region);
 
-        fBkgIntfImg.CopyPixels(tile,l,t,True);
+        fBkgIntfImg.Obj.CopyPixels(tile,l,t,True);
 
 end;
 
@@ -659,7 +659,7 @@ end;
 
 procedure TKSRoomView.RedrawLayImgTile(iLayer: integer);		// updates fLayImg for tile layers
 begin
-	fLayIntfImg[iLayer]:=EmptyIntfImage(fLayWid,fLayHei);
+	fLayIntfImg[iLayer].Clear;
 
 	if (fShowNeighbors) then
 	begin
@@ -741,7 +741,7 @@ begin
                         end;
 
 
-                        fLayIntfImg[iLayer].CopyPixels(tile,RoomX*24+xpofs,RoomY*24+ypofs,True);
+                        fLayIntfImg[iLayer].Obj.CopyPixels(tile,RoomX*24+xpofs,RoomY*24+ypofs,True);
 
 		end;		// for RoomX
 	end;		// for RoomY
@@ -758,7 +758,7 @@ procedure TKSRoomView.RedrawLayImgObj (iLayer: integer);		// updates fLayImg for
 var
 	i: integer;
 begin
-	fLayIntfImg[iLayer]:=EmptyIntfImage(fLayWid,fLayHei);
+	fLayIntfImg[iLayer].Clear;
 
 	// draw objects:
 	if (fShowNeighbors) then
@@ -833,7 +833,7 @@ begin
 
                         if tile <> nil then
                         begin
-                                fLayIntfImg[iLayer].CopyPixels(tile,RoomX*24+xpofs,RoomY*24+ypofs,True);
+                                fLayIntfImg[iLayer].Obj.CopyPixels(tile,RoomX*24+xpofs,RoomY*24+ypofs,True);
 
                         end;
 
@@ -939,9 +939,11 @@ begin
 		Exit;
 	end;
 
+	fRoomIntfImg.Clear;
+
 	if (fBkgVis) then
 	begin
-		WriteLayer(fRoomIntfImg,fBkgIntfImg,TPoint.Create(0,0));
+		WriteLayer(fRoomIntfImg.Obj,fBkgIntfImg.Obj,TPoint.Create(0,0));
 		//SaveAsPng(fRoomIntfImg,'D:\Debug\roomwritten.png');
 	end
 	else
@@ -962,7 +964,7 @@ begin
 			continue;
 		end;
 
-		WriteLayer(fRoomIntfImg,fLayIntfImg[LayerNum],TPoint.Create(0,0));
+		WriteLayer(fRoomIntfImg.Obj,fLayIntfImg[LayerNum].Obj,TPoint.Create(0,0));
 
 		//SaveAsPng(fRoomIntfImg,'D:\Debug\roomwritten'+IntToStr(i)+'.png');
 		(*
