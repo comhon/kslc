@@ -465,7 +465,7 @@ begin
 		bmp.Canvas.Brush.Style := bsSolid;
 		bmp.Canvas.FillRect(Rect(0, 0, 650, 290));
 
-		bmp.Canvas.Draw(0,0,CreateMaskedBitmap(fRoomIntfImg.Obj));
+		fRoomIntfImg.Draw(bmp,0,0);
 
 		bmp.Canvas.Brush.Color := Self.Color;
 		bmp.Canvas.Brush.Style := bsSolid;
@@ -943,7 +943,7 @@ begin
 
 	if (fBkgVis) then
 	begin
-		WriteLayer(fRoomIntfImg.Obj,fBkgIntfImg.Obj,TPoint.Create(0,0));
+		fRoomIntfImg.Draw(fBkgIntfImg,0,0);
 		//SaveAsPng(fRoomIntfImg,'D:\Debug\roomwritten.png');
 	end
 	else
@@ -964,7 +964,7 @@ begin
 			continue;
 		end;
 
-		WriteLayer(fRoomIntfImg.Obj,fLayIntfImg[LayerNum].Obj,TPoint.Create(0,0));
+		fRoomIntfImg.Draw(fLayIntfImg[LayerNum],0,0)
 
 		//SaveAsPng(fRoomIntfImg,'D:\Debug\roomwritten'+IntToStr(i)+'.png');
 		(*

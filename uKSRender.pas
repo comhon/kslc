@@ -23,6 +23,10 @@ type
     destructor Destroy; override;
     procedure Clear;
 
+    procedure Draw(var KSIntfImage: TKSIntfImage; Left,Top: Integer); overload;
+    procedure Draw(var Bitmap: TBitmap; Left,Top: Integer); overload;
+
+
     property Width: integer read FWidth;
     property Height: integer read FHeight;
 
@@ -216,6 +220,16 @@ begin
   end;
 
   Obj.CopyPixels(FEmptyIntfImg,0,0,True);
+end;
+
+procedure TKSIntfImage.Draw(var KSIntfImage: TKSIntfImage; Left, Top: Integer);
+begin
+  WriteLayer(Obj,KSIntfImage.Obj,TPoint.Create(Left,Top));
+end;
+
+procedure TKSIntfImage.Draw(var Bitmap: TBitmap; Left, Top: Integer);
+begin
+  DrawIntfImage(Obj,Bitmap.Canvas,TPoint.Create(0,0))
 end;
 
 end.
