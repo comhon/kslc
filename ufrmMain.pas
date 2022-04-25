@@ -202,6 +202,7 @@ type
 		procedure actViewShiftsLeadingHereExecute(Sender: TObject);
 		procedure OnLevelChanged(Sender: TObject);
 		procedure actViewLayExecute(Sender: TObject);
+		procedure pcMainChange(Sender: TObject);
 		procedure tlLayerMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 		procedure rvMainMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
 		procedure imgLayersMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -1311,6 +1312,10 @@ begin
 	rvMain.LayerVisible[idx] := v;
 end;
 
+procedure TfrmMain.pcMainChange(Sender: TObject);
+begin
+	pcMain.ActivePage.SetFocus;
+end;
 
 
 

@@ -57,6 +57,7 @@ object frmMain: TfrmMain
     Align = alClient
     TabIndex = 0
     TabOrder = 2
+    OnChange = pcMainChange
     object tsTiles: TTabSheet
       Caption = 'T&iles'
       ClientHeight = 531
