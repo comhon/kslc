@@ -729,17 +729,8 @@ begin
 				continue;
 			end;
 			ix := ((iRoom.Data.Tile[iLayer].Tile[RoomY, RoomX] and $7f) mod 16);
-			tx:= ix*24;
 			iy := ((iRoom.Data.Tile[iLayer].Tile[RoomY, RoomX] and $7f) div 16);
-			ty:= iy*24;
-
-                        tile:=ts.TileCache[ix,iy];
-                        if tile = nil then
-                        begin
-                             tile:=CreateRegion(ts.ImgLaz,TRect.Create(tx,ty,tx+24,ty+24));
-                             ts.TileCache[ix,iy]:=tile;
-                        end;
-
+                        tile:=ts.GetTile(ix,iy);
 
                         fLayIntfImg[iLayer].Obj.CopyPixels(tile,RoomX*24+xpofs,RoomY*24+ypofs,True);
 

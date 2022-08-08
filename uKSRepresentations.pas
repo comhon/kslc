@@ -105,7 +105,9 @@ type
 
 
 
-	TKSTileset = class
+{ TKSTileset }
+
+ TKSTileset = class
 	public
 		Number: integer;
 		NeedsLoading: boolean;
@@ -126,6 +128,7 @@ type
 		procedure Load(iLevelDir: string);
 
 		procedure NeedMask();
+		function GetTile(ix,iy: integer): TLazIntfImage;
 	end;
 
 
@@ -687,6 +690,21 @@ begin
 	IsMaskCreated := True;
 end;
 
+function TKSTileset.GetTile(ix, iy: integer): TLazIntfImage;
+var
+	tile: TLazIntfImage;
+	tx,ty: integer;
+begin
+	tx:= ix*24;
+	ty:= iy*24;
+	tile:=self.TileCache[ix,iy];
+	if tile = nil then
+	begin
+		tile:=CreateRegion(self.ImgLaz,TRect.Create(tx,ty,tx+24,ty+24));
+		self.TileCache[ix,iy]:=tile;
+	end;
+	result:=tile;
+end;
 
 
 
