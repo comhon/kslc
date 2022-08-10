@@ -5,8 +5,10 @@ unit uWebVersionCheckThread;
 interface
 
 uses
-	Classes,
-	WinInet;
+        {$DEFINE UseCThreads} {$IFDEF UNIX}{$IFDEF UseCThreads} cthreads, {$ENDIF}{$ENDIF}
+        //*h WinInet,
+        Classes;
+
 
 
 
@@ -14,7 +16,6 @@ uses
 
 type
 	TWebVersionRecvProc = procedure(Sender: TObject; WebVersion: string) of object;
-
 
 
 
@@ -35,7 +36,6 @@ type
 	protected
 		procedure Execute; override;
 	end;
-
 
 
 
@@ -101,7 +101,6 @@ end;
 
 
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TWebVersionCheckThread
 
@@ -122,12 +121,13 @@ end;
 procedure TWebVersionCheckThread.Execute;
 var
 	URL: string;
-	hInet, hData: HINTERNET;
+	//hInet, hData: HINTERNET;
 	buffer: array[0..DOWNLOAD_BUFFER_SIZE] of char;
 	dwRead: cardinal;
 	pos: cardinal;
 begin
-	URL := 'http://xoft.cz/KSLC/version_check.php?level_name=' + URLEncode(LevelName) + '&author_name=' + URLEncode(AuthorName) + '&version=' + CurrentVersion;
+        (*//*h
+        URL := 'http://xoft.cz/KSLC/version_check.php?level_name=' + URLEncode(LevelName) + '&author_name=' + URLEncode(AuthorName) + '&version=' + CurrentVersion;
 
 	hInet := InternetOpen(PChar('KSLC' + CurrentVersion), INTERNET_OPEN_TYPE_PRECONFIG, nil, nil, 0);
 	if not(Assigned(hInet)) then
@@ -154,9 +154,12 @@ begin
 	buffer[pos] := #0;
 	InternetCloseHandle(hData);
 	InternetCloseHandle(hINet);
-	WebVersion := string(buffer);
-	
-	Synchronize(RecvNotify);
+        WebVersion := string(buffer);
+        *)
+        WebVersion := 'ERROR';
+
+        Synchronize(RecvNotify)
+
 end;
 
 

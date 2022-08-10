@@ -5,7 +5,7 @@ unit uKSObjectChooser;
 interface
 
 uses
-	Windows,
+	//Windows,
 	Messages,
 	SysUtils,
 	Classes,
@@ -193,8 +193,8 @@ begin
 	Canvas.FillRect(Rect(0, 0, Width, Height));
 	Canvas.Font.Size := -18;
 	Canvas.Font.Name := 'Arial';
-	SetTextAlign(Canvas.Handle, TA_CENTER or TA_TOP);
-	SetBkMode(Canvas.Handle, TRANSPARENT);
+	//*h SetTextAlign(Canvas.Handle, TA_CENTER or TA_TOP);
+	//*h SetBkMode(Canvas.Handle, TRANSPARENT);
 	Canvas.TextOut(Width div 2, 1, 'Bank: ' + IntToStr(fBank));
 	if (Assigned(BankImage)) then
 	begin
@@ -214,7 +214,7 @@ end;
 
 procedure TKSObjectChooser.ReloadBankImage();
 begin
-	ReloadImage(BankImage, gKSDir + 'Data\Objects\Bank' + IntToStr(fBank) + '\Bank.png');
+	ReloadImage(BankImage, gKSDir + 'Data/Objects/Bank' + IntToStr(fBank) + '/Bank.png');
 	fShouldReloadBankImage := false;
 end;
 
@@ -224,7 +224,7 @@ end;
 
 procedure TKSObjectChooser.ReloadObjImage();
 begin
-	ReloadImage(ObjImage, gKSDir + 'Data\Objects\Bank' + IntToStr(fBank) + '\Object' + IntToStr(fObj) + '.png');
+	ReloadImage(ObjImage, gKSDir + 'Data/Objects/Bank' + IntToStr(fBank) + '/Object' + IntToStr(fObj) + '.png');
 	fShouldReloadObjImage := false;
 end;
 

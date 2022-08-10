@@ -5,8 +5,7 @@ unit uSettings;
 interface
 
 uses
-        Windows,
-	Classes,
+        Classes,
 	Registry;
 
 
@@ -168,7 +167,7 @@ begin
 		end
 		else
 		begin
-			LastLevelDir := gKSDir + 'Worlds\';
+			LastLevelDir := gKSDir + 'Worlds/';
 		end;
 
 		// MRU:
@@ -292,8 +291,8 @@ var
 	xedge, yedge: integer;
 	FontHeight: integer;
 begin
-	xedge := GetSystemMetrics(SM_CXEDGE) + 1;
-	yedge := GetSystemMetrics(SM_CYEDGE) + 1;
+	xedge := 1;//*h GetSystemMetrics(SM_CXEDGE) + 1;
+	yedge := 1;//*h GetSystemMetrics(SM_CYEDGE) + 1;
 	if (Screen.MenuFont.Height < 0) then
 	begin
 		FontHeight := -Screen.MenuFont.Height;
@@ -310,14 +309,14 @@ begin
 	MapLeft    := 650 + 2 * xedge;
 	MapTop     := 0;
 	MapWidth   := Screen.Width - MapLeft;
-	MapHeight  := 300 + yedge + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYMENU) + FontHeight + 1;
+	MapHeight  := 300 + yedge + 10 (*GetSystemMetrics(SM_CYCAPTION) *) + 10 + (*GetSystemMetrics(SM_CYMENU) *) + FontHeight + 1;
 	MapVisible := true;
 
 	// RoomParams wnd:
 	RoomParamsLeft   := 0;
 	RoomParamsTop    := MapHeight;
 	RoomParamsWidth  := MapLeft;
-	RoomParamsHeight := GetSystemMetrics(SM_CYMAXIMIZED) - RoomParamsTop - 2 * yedge;
+	RoomParamsHeight := 100; //*h GetSystemMetrics(SM_CYMAXIMIZED) - RoomParamsTop - 2 * yedge;
 	RoomParamsVisible := true;
 
 	// log wnd:

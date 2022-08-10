@@ -6,13 +6,14 @@ program KSLC;
 {%File 'Todo.txt'}
 
 uses
-	Windows,
-	Forms,
+        {$DEFINE UseCThreads} {$IFDEF UNIX}{$IFDEF UseCThreads} cthreads, {$ENDIF}{$ENDIF}
+
+        Forms,
 	Dialogs,
 	Controls, Interfaces,
 	SysUtils,
 	Classes,
-	ShellAPI,
+	//*hShellAPI,
   ufrmMain in 'ufrmMain.pas' {frmMain},
   uKSRepresentations in 'uKSRepresentations.pas',
   ufrmViewPowerups in 'ufrmViewPowerups.pas' {frmViewPowerups},
@@ -154,7 +155,17 @@ end;
 
 
 begin
-	Application.Initialize();
+  if DirectoryExists('/home/comhon/games/ks') then
+  begin
+          //ShowMessage('/home/comhon/games/ks exists')
+  end;
+
+  if DirectoryExists('/home/comhon/games/ks/') then
+  begin
+          //ShowMessage('/home/comhon/games/ks/ exists')
+  end;
+
+  Application.Initialize();
         InitializeSettings;
 
 	gLog := TKSLog.Create(LOG_INFO);
@@ -179,13 +190,13 @@ begin
 		try
 			dlgOpen.InitialDir := '.';
 			dlgOpen.Title := 'Where is your Knytt Stories exe:';
-			dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories.exe';
+			//dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories.exe';
 			if (dlgOpen.Execute()) then
 			begin
 				gKSDir := ExtractFilePath(dlgOpen.Filename);
-				if (gKSDir[Length(gKSDir)] <> '\') then
+				if (gKSDir[Length(gKSDir)] <> '/') then
 				begin
-					gKSDir := gKSDir + '\';
+					gKSDir := gKSDir + '/';
 				end;
 				gLog.Log(LOG_INFO, 'Knytt Stories directory set to "' + gKSDir + '"');
 			end
@@ -200,6 +211,8 @@ begin
 		frmMain.BringToFront();
 		Application.BringToFront();
 	end;
+        //gKSDir:='/home/comhon/games/ks/';
+
 	gLog.Log(LOG_INFO, 'Knytt Stories directory is "' + gKSDir + '"');
 	gLog.Log(LOG_INFO, 'Initialization complete, starting main window');
 	gSettings.SetForms();
@@ -216,7 +229,7 @@ begin
 				Exit;
 			end;
 
-			mrKSDirNoWorlds:
+			mrKSDirNoWorlds,mrNoWorldFound:
 			begin
 				ShowMessage('There are no levels installed in the KS folder. Please use View->Settings to check and set KS folder.'#13#10#13#10'Normal file open will commence now.');
 				frmMain.actFileOpenExecute(nil);
@@ -229,7 +242,7 @@ begin
 			end;
 		end;
 
-		frmMain.OpenFile(dlg.Path + 'map.bin');
+		frmMain.OpenFile(dlg.Path + 'Map.bin');
 	finally
 		dlg.Release();
 	end;

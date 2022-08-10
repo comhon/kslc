@@ -10,7 +10,6 @@ unit uKSRepresentations;
 interface
 
 uses
-	Windows,
 	Classes,
 	SysUtils,
 	Graphics,
@@ -604,10 +603,10 @@ var
 	fnam: string;
 begin
 	Img := TPortableNetworkGraphic.Create();
-	fnam := iLevelDir + 'Tilesets\Tileset' + IntToStr(Number) + '.png';
+	fnam := iLevelDir + 'Tilesets/Tileset' + IntToStr(Number) + '.png';
 	if not(FileExists(fnam)) then
 	begin
-		fnam := gKSDir + 'Data\Tilesets\Tileset' + IntToStr(Number) + '.png';
+		fnam := gKSDir + 'Data/Tilesets/Tileset' + IntToStr(Number) + '.png';
 	end;
 	if Assigned(Log) then Log.Log(LOG_INFO, 'Loading tileset #' + IntToStr(Number) + ' from file "' + fnam + '"');
 	try
@@ -1226,10 +1225,10 @@ procedure TKSLevel.LoadBackground(iNumber: integer);
 var
 	fnam: string;
 begin
-	fnam := LevelDir + 'Gradients\Gradient' + IntToStr(iNumber) + '.png';
+	fnam := LevelDir + 'Gradients/Gradient' + IntToStr(iNumber) + '.png';
 	if not(FileExists(fnam)) then
 	begin
-		fnam := gKSDir + 'Data\Gradients\Gradient' + IntToStr(iNumber) + '.png';
+		fnam := gKSDir + 'Data/Gradients/Gradient' + IntToStr(iNumber) + '.png';
 	end;
 	if Assigned(Log) then Log.Log(LOG_INFO, 'Loading background #' + IntToStr(iNumber) + ' from file "' + fnam + '"');
 	try
@@ -1629,7 +1628,7 @@ begin
 		Exit;
 	end;
 
-	fnam := gKSDir + 'Data\Objects\Bank' + IntToStr(Bank) + '\Object' + IntToStr(ID) + '.png';
+	fnam := gKSDir + 'Data/Objects/Bank' + IntToStr(Bank) + '/Object' + IntToStr(ID) + '.png';
 	if not(FileExists(fnam)) then
 	begin
 		Exit;

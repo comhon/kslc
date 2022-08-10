@@ -17,7 +17,6 @@ unit ufrmShiftsToHere;
 interface
 
 uses
-	Windows,
 	Messages,
 	SysUtils,
 	Variants,

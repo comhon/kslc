@@ -5,7 +5,6 @@ unit udlgSettings;
 interface
 
 uses
-	Windows,
 	Messages,
 	SysUtils,
 	Variants,
@@ -68,9 +67,9 @@ uses
 procedure TdlgSettings.tlOKClick(Sender: TObject);
 begin
 	gKSDir := eKSDir.Text;
-	if (gKSDir[Length(gKSDir)] <> '\') then
+	if (gKSDir[Length(gKSDir)] <> '/') then
 	begin
-		gKSDir := gKSDir + '\';
+		gKSDir := gKSDir + '/';
 	end;
 	gLog.Log(LOG_INFO, 'Knytt Stories directory set to "' + gKSDir + '"');
 	gSettings.AllowWebVersionCheck := chbAllowWebVersionCheck.Checked;

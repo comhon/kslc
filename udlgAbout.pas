@@ -5,7 +5,6 @@ unit udlgAbout;
 interface
 
 uses
-	Windows,
 	Messages,
 	SysUtils,
 	Variants,
@@ -72,9 +71,11 @@ type
 
 implementation
 
+//*h
+(*
 uses
 	ShellAPI;
-
+*)
 
 
 
@@ -87,7 +88,7 @@ uses
 
 procedure TdlgAbout.tlGoToKSClick(Sender: TObject);
 begin
-	ShellExecute(Handle, nil, 'http://egomassive.com/ks/', '', '', SW_SHOWNORMAL);
+	//*h ShellExecute(Handle, nil, 'http://egomassive.com/ks/', '', '', SW_SHOWNORMAL);
 end;
 
 
@@ -95,7 +96,7 @@ end;
 
 procedure TdlgAbout.tlGoToSFClick(Sender: TObject);
 begin
-	ShellExecute(Handle, nil, 'http://nifflas.lpchip.nl/', '', '', SW_SHOWNORMAL);
+	//*h ShellExecute(Handle, nil, 'http://nifflas.lpchip.nl/', '', '', SW_SHOWNORMAL);
 end;
 
 
@@ -104,7 +105,7 @@ end;
 
 procedure TdlgAbout.tlGoToKSLCClick(Sender: TObject);
 begin
-	ShellExecute(Handle, nil, 'http://xoft.cz/KSLC', '', '', SW_SHOWNORMAL);
+	//*h ShellExecute(Handle, nil, 'http://xoft.cz/KSLC', '', '', SW_SHOWNORMAL);
 end;
 
 

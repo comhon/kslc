@@ -5,7 +5,6 @@ unit udlgMultiRoomParam;
 interface
 
 uses
-	Windows,
 	Messages,
 	SysUtils,
 	Variants,
