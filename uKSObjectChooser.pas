@@ -11,8 +11,7 @@ uses
 	Classes,
 	Graphics,
 	Controls,
-	IntfGraphics,
-	uKSRender;
+	uKSGraphic;
 
 
 
@@ -24,10 +23,8 @@ type
 		fBank: integer;
 		fObj: integer;
 
-		BankImage: TPortableNetworkGraphic;
-		BankIntfImage: TLazIntfImage;
-		ObjImage: TPortableNetworkGraphic;
-		ObjIntfImage: TLazIntfImage;
+		BankImage: TKSImage;
+		ObjImage: TKSImage;
 
 		fShouldReloadBankImage: boolean;
 		fShouldReloadObjImage: boolean;
@@ -38,7 +35,7 @@ type
 		procedure Paint(); override;
 		procedure ReloadBankImage();
 		procedure ReloadObjImage();
-		procedure ReloadImage(var Image: TPortableNetworkGraphic; iFileName: string);
+		procedure ReloadImage(var Image: TKSImage; iFileName: string);
 
 		procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
 
@@ -117,8 +114,8 @@ end;
 constructor TKSObjectChooser.Create(AOwner: TComponent);
 begin
 	inherited Create(AOwner);
-	BankImage := TPortableNetworkGraphic.Create();
-	ObjImage := TPortableNetworkGraphic.Create();
+	BankImage := TKSImage.Create();
+	ObjImage := TKSImage.Create();
 	fBank := 0;
 	fObj := 0;
 	Width := 100;
@@ -200,15 +197,14 @@ begin
 	SetTextAlign(Canvas.Handle, TA_CENTER or TA_TOP);
 	SetBkMode(Canvas.Handle, TRANSPARENT);
 	Canvas.TextOut(Width div 2, 1, 'Bank: ' + IntToStr(fBank));
-	if (Assigned(BankIntfImage)) then
+	if (Assigned(BankImage)) then
 	begin
-		DrawIntfImage(BankIntfImage,Canvas,TPoint.Create((Width - BankImage.Width) div 2, 70 - BankImage.Height div 2));
+		BankImage.Draw(Canvas,(Width - BankImage.Width) div 2, 70 - BankImage.Height div 2);
 	end;
-
 	Canvas.TextOut(Width div 2, 121, 'Obj: ' + IntToStr(fObj));
-	if (Assigned(ObjIntfImage)) then
+	if (Assigned(ObjImage)) then
 	begin
-		DrawIntfImage(ObjIntfImage,Canvas,TPoint.Create((Width - ObjImage.Width) div 2, 190 - ObjImage.Height div 2));
+		ObjImage.Draw(Canvas,(Width - ObjImage.Width) div 2, 190 - ObjImage.Height div 2);
 	end;
 end;
 
@@ -220,7 +216,6 @@ procedure TKSObjectChooser.ReloadBankImage();
 begin
 	ReloadImage(BankImage, gKSDir + 'Data\Objects\Bank' + IntToStr(fBank) + '\Bank.png');
 	fShouldReloadBankImage := false;
-	if not BankImage.Empty then BankIntfImage:=CreateIntfImage(BankImage) else BankIntfImage:=nil;
 end;
 
 
@@ -231,14 +226,13 @@ procedure TKSObjectChooser.ReloadObjImage();
 begin
 	ReloadImage(ObjImage, gKSDir + 'Data\Objects\Bank' + IntToStr(fBank) + '\Object' + IntToStr(fObj) + '.png');
 	fShouldReloadObjImage := false;
-	if not ObjImage.Empty then ObjIntfImage:=CreateIntfImage(ObjImage) else ObjIntfImage:=nil;
 end;
 
 
 
 
 
-procedure TKSObjectChooser.ReloadImage(var Image: TPortableNetworkGraphic; iFileName: string);
+procedure TKSObjectChooser.ReloadImage(var Image: TKSImage; iFileName: string);
 begin
 	if not(FileExists(iFileName)) then
 	begin
@@ -246,7 +240,7 @@ begin
 		Exit;
 	end;
 	try
-		Image.LoadFromFile(iFileName);
+		Image.LoadFromPNGFile(iFileName);
 	except
 		Image.Clear;
 	end;

@@ -2191,7 +2191,7 @@ begin
 		begin
 			continue;
 		end;
-		Canvas.Draw(i * 24, 0, obj.Img);
+		obj.Img.Draw(Canvas,i*24,0)
 	end;
 end;
 

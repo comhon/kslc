@@ -19,7 +19,8 @@ uses
 	uKSObjects,
 	uKSObjPass,
 	uKSLog,
-	IntfGraphics,
+        IntfGraphics,
+	uKSGraphic,
 	uKSRender;
 
 
@@ -112,8 +113,7 @@ type
 		Number: integer;
 		NeedsLoading: boolean;
 		IsLoaded: boolean;
-		Img: TPortableNetworkGraphic;
-		ImgLaz: TLazIntfImage;
+		Img: TKSImage;
 		IsMaskCreated: boolean;
 
 		Log: TKSLog;
@@ -198,9 +198,8 @@ type
 		Room: array of TKSRoom;
 
 		Tileset: array[0..255] of TKSTileset;
-		Background: array[0..255] of TPortableNetworkGraphic;
-		BackgroundIntF: array[0..255] of TLazIntfImage;
-		BackgroundFillIntf: array[0..255] of TLazIntfImage;
+		Background: array[0..255] of TKSImage;
+		BackgroundFill: array[0..255] of TKSImage;
 
 		StartRoomX, StartRoomY: integer;
 		StartX, StartY: integer;
@@ -254,8 +253,7 @@ type
 		Bank: byte;
 		ID: byte;
 		Description: byte;
-		Img: TPortableNetworkGraphic;
-		IntfImg: TLazIntfImage;
+		Img: TKSImage;
 
 		constructor Create(iBank: byte; iID: byte);
 		destructor Destroy(); override;
@@ -625,8 +623,7 @@ procedure TKSTileset.Load(iLevelDir: string);
 var
 	fnam: string;
 begin
-	Img := TPortableNetworkGraphic.Create();
-	ImgLaz:=TLazIntfImage.Create(0,0);
+	Img := TKSImage.Create();
 	fnam := iLevelDir + 'Tilesets\Tileset' + IntToStr(Number) + '.png';
 	if not(FileExists(fnam)) then
 	begin
@@ -634,8 +631,7 @@ begin
 	end;
 	if Assigned(Log) then Log.Log(LOG_INFO, 'Loading tileset #' + IntToStr(Number) + ' from file "' + fnam + '"');
 	try
-		Img.LoadFromFile(fnam);
-		ImgLaz:=CreateIntfImage(Img);
+		Img.LoadFromPNGFile(fnam);
 	except
 		on e: Exception do
 		begin
@@ -700,7 +696,7 @@ begin
 	tile:=self.TileCache[ix,iy];
 	if tile = nil then
 	begin
-		tile:=CreateRegion(self.ImgLaz,TRect.Create(tx,ty,tx+24,ty+24));
+		tile:=CreateRegion(self.Img.GetLazImg,TRect.Create(tx,ty,tx+24,ty+24));
 		self.TileCache[ix,iy]:=tile;
 	end;
 	result:=tile;
@@ -912,7 +908,7 @@ begin
 	for i := 0 to 255 do
 	begin
 		Tileset[i] := TKSTileset.Create(i, iLog);
-		Background[i] := TPortableNetworkGraphic.Create();
+		Background[i] := TKSImage.Create();
 	end;
 end;
 
@@ -938,8 +934,10 @@ begin
 	for i := 0 to 255 do
 	begin
 		Background[i].Free();
-		BackgroundIntf[i].Free();
-		BackgroundFillIntf[i].Free();
+		if Assigned(BackgroundFill[i]) then
+		begin
+			BackgroundFill[i].Free();
+		end;
 		Tileset[i].Free();
 	end;
 	inherited Destroy();
@@ -965,7 +963,7 @@ begin
 		Background[i].Free();
 		Tileset[i].Free();
 		Tileset[i] := TKSTileset.Create(i, Log);
-		Background[i] := TPortableNetworkGraphic.Create();
+		Background[i] := TKSImage.Create();
 	end;
 end;
 
@@ -1274,8 +1272,7 @@ begin
 	end;
 	if Assigned(Log) then Log.Log(LOG_INFO, 'Loading background #' + IntToStr(iNumber) + ' from file "' + fnam + '"');
 	try
-		Background[iNumber].LoadFromFile(fnam);
-		BackgroundIntf[iNumber]:=Background[iNumber].CreateIntfImage;
+		Background[iNumber].LoadFromPNGFile(fnam);
 	except
 		on e: Exception do
 		begin
@@ -1645,7 +1642,6 @@ begin
 	// TODO: description loading
 	// Description := TryLoadDescription();
 	Img := nil;
-	IntfImg := nil;
 end;
 
 
@@ -1656,8 +1652,6 @@ destructor TKSObject.Destroy();
 begin
 	if Assigned(Img) then Img.Free();
 	Img := nil;
-	if Assigned(IntfImg) then IntfImg.Free();
-	IntfImg := nil;
 	inherited Destroy();
 end;
 
@@ -1680,10 +1674,9 @@ begin
 		Exit;
 	end;
 	
-	Img := TPortableNetworkGraphic.Create();
+	Img := TKSImage.Create();
 	try
-		Img.LoadFromFile(fnam);
-		CreatePNGAlpha(Img);
+		Img.LoadFromPNGFile(fnam);
 	except
 		Img.Free();
 		Img := nil;
