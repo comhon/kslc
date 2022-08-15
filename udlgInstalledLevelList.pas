@@ -209,7 +209,7 @@ begin
                         if sr.Name = '..' then continue;
                         if sr.Name = '.' then continue;
                         wrld := TWorldDesc.Create();
-			wrld.Path := gKSDir + 'Worlds/' + sr.Name + '/';
+			wrld.Path := IncludeTrailingpathDelimiter(ConcatPaths([gKSDir,'Worlds',sr.Name]));
 			wrld.DirName := sr.Name;
 			if (not(FileExists(wrld.Path + 'Map.bin')) or not(FileExists(wrld.Path + 'World.ini'))) then
 			begin

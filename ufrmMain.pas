@@ -20,7 +20,8 @@ uses
 	ComCtrls,
 	StdCtrls,
 	uVectors,
-	//*hShellAPI,
+	LCLIntf,
+	Process,
 	uVersionInfo,
 	uKSLog,
 	uKSRepresentations,
@@ -1144,7 +1145,7 @@ begin
 	begin
 		if (MessageDlg('There is a newer version on the web: ' + WebVersion + #13#10#13#10'Would you like to go to the download page?', mtConfirmation, mbOKCancel, 0) = mrOK) then
 		begin
-			//*h ShellExecute(0, nil, 'http://xoft.cz/KSLC', nil, nil, SW_SHOWDEFAULT);
+			OpenUrl('http://xoft.cz/KSLC');
 		end;
 	end;
 end;
@@ -1502,7 +1503,21 @@ begin
 end;
 
 
+procedure ShellExecSimple(exename, arguments, startdir: string);
+var
+	proc: TProcess;
+begin
+	proc := TProcess.Create(nil);
+	try
+		proc.Executable := exename;
+		proc.Parameters.Add(arguments);
+		proc.CurrentDirectory:=startdir;
 
+		proc.Execute;
+	finally
+		proc.Free;
+	end;
+end;
 
 
 procedure TfrmMain.TestLevelSetPos(iTileCoords: TPoint);
@@ -1518,7 +1533,7 @@ begin
 		end;
 		fLevel.SaveToFile(fLevel.FileName);
 
-		fnam := gKSDir + 'Saves/TestLevel.temp';
+		fnam := ConcatPaths([gKSDir,'Saves','TestLevel.temp']);
 		AssignFile(f, fnam);
 		try
 			Rewrite(f);
@@ -1549,7 +1564,7 @@ begin
 		finally
 			CloseFile(f);
 		end;
-		//*h ShellExecute(0, 'open', PChar(gKSDir + 'Knytt Stories.exe'), '-Mode=Test', PChar(gKSDir), SW_SHOWNORMAL);
+		ShellExecSimple( gKSDir + 'Knytt Stories.exe', '-Mode=Test', gKSDir);
 	finally
 		CurrentAction := caInsert;
 		IsRVMouseDown := false;		// to prevent drawing tiles upon mouseup / another mousemove
@@ -1658,12 +1673,12 @@ var
 				Color := clBtnFace;
 			end;
 		end;
-		//*h SetTextColor(bmp.Canvas.Handle, 0);
+		bmp.Canvas.Font.Color:=ColorToRGB(clBlack);
 		bmp.Canvas.TextOut(x - 1, y, Caption);
 		bmp.Canvas.TextOut(x + 1, y, Caption);
 		bmp.Canvas.TextOut(x, y - 1, Caption);
 		bmp.Canvas.TextOut(x, y + 1, Caption);
-		//*h SetTextColor(bmp.Canvas.Handle, ColorToRGB(Color));
+		bmp.Canvas.Font.Color:=ColorToRGB(Color);
 		bmp.Canvas.TextOut(x, y, Caption);
 	end;
 
@@ -1678,8 +1693,7 @@ begin
 	bmp.Height := imgLayers.Height;
 	bmp.Canvas.Brush.Color := clBtnFace;
 	bmp.Canvas.FillRect(Rect(0, 0, bmp.Width, bmp.Height));
-	//*h SetTextAlign(bmp.Canvas.Handle, TA_TOP or TA_CENTER);
-	//*h SetBkMode(bmp.Canvas.Handle, TRANSPARENT);
+	bmp.Canvas.Brush.Style:=bsClear;
 	bmp.Canvas.Font.Name := 'Arial';
 	bmp.Canvas.Font.Size := -20;
 	bmp.Canvas.Font.Style := [fsBold];

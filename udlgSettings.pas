@@ -67,10 +67,7 @@ uses
 procedure TdlgSettings.tlOKClick(Sender: TObject);
 begin
 	gKSDir := eKSDir.Text;
-	if (gKSDir[Length(gKSDir)] <> '/') then
-	begin
-		gKSDir := gKSDir + '/';
-	end;
+	gKSDir := IncludeTrailingPathDelimiter(gKSDir);
 	gLog.Log(LOG_INFO, 'Knytt Stories directory set to "' + gKSDir + '"');
 	gSettings.AllowWebVersionCheck := chbAllowWebVersionCheck.Checked;
 	gSettings.AllowWebStats := chbAllowWebStats.Checked;

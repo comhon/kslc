@@ -71,11 +71,8 @@ type
 
 implementation
 
-//*h
-(*
 uses
-	ShellAPI;
-*)
+	LCLintf;
 
 
 
@@ -88,7 +85,7 @@ uses
 
 procedure TdlgAbout.tlGoToKSClick(Sender: TObject);
 begin
-	//*h ShellExecute(Handle, nil, 'http://egomassive.com/ks/', '', '', SW_SHOWNORMAL);
+	OpenURL('http://egomassive.com/ks/');
 end;
 
 
@@ -96,7 +93,7 @@ end;
 
 procedure TdlgAbout.tlGoToSFClick(Sender: TObject);
 begin
-	//*h ShellExecute(Handle, nil, 'http://nifflas.lpchip.nl/', '', '', SW_SHOWNORMAL);
+	OpenURL('http://nifflas.lpchip.nl/');
 end;
 
 
@@ -105,7 +102,7 @@ end;
 
 procedure TdlgAbout.tlGoToKSLCClick(Sender: TObject);
 begin
-	//*h ShellExecute(Handle, nil, 'http://xoft.cz/KSLC', '', '', SW_SHOWNORMAL);
+	OpenURL('http://xoft.cz/KSLC');
 end;
 
 

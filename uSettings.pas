@@ -5,8 +5,7 @@ unit uSettings;
 interface
 
 uses
-        Classes,
-	Registry;
+        Classes;
 
 
 
@@ -73,6 +72,7 @@ var
 implementation
 
 uses
+	{$IFDEF WINDOWS}Windows,{$ENDIF}
 	Forms,
 	SysUtils,
 	Dialogs,
@@ -283,7 +283,36 @@ begin
 end;
 
 
+type
+    TWindowMetrics = (smXEdge, smYEdge, smYCaption, smYMenu, smYMaximized);
 
+function GetMetrics(Metric: TWindowMetrics): integer;
+begin
+     {$IFDEF WINDOWS}
+     case Metric of
+          smXEdge:
+                  result:=GetSystemMetrics(SM_CXEDGE);
+          smYEdge:
+                  result:=GetSystemMetrics(SM_CYEDGE);
+          smYCaption:
+                  result:=GetSystemMetrics(SM_CYCAPTION);
+          smYMenu:
+                  result:=GetSystemMetrics(SM_CYMENU);
+          smYMaximized:
+                  result:=GetSystemMetrics(SM_CYMAXIMIZED);
+     end;
+     {$ENDIF}
+     {$IFDEF UNIX}
+     case Metric of
+          smXEdge, smYEdge:
+                  result:=1;
+          smYCaption, smYMenu:
+                  result:=15;
+          smYMaximized
+                  result:=480;
+          end;
+     {$ENDIF}
+end;
 
 
 procedure TSettings.SetDefaults();
@@ -291,8 +320,8 @@ var
 	xedge, yedge: integer;
 	FontHeight: integer;
 begin
-	xedge := 1;//*h GetSystemMetrics(SM_CXEDGE) + 1;
-	yedge := 1;//*h GetSystemMetrics(SM_CYEDGE) + 1;
+	xedge := GetMetrics(smXEdge);
+	yedge := GetMetrics(smYEdge);
 	if (Screen.MenuFont.Height < 0) then
 	begin
 		FontHeight := -Screen.MenuFont.Height;
@@ -309,14 +338,14 @@ begin
 	MapLeft    := 650 + 2 * xedge;
 	MapTop     := 0;
 	MapWidth   := Screen.Width - MapLeft;
-	MapHeight  := 300 + yedge + 10 (*GetSystemMetrics(SM_CYCAPTION) *) + 10 + (*GetSystemMetrics(SM_CYMENU) *) + FontHeight + 1;
+	MapHeight  := 300 + yedge + GetMetrics(smYCaption) + GetMetrics(smYMenu) + FontHeight + 1;
 	MapVisible := true;
 
 	// RoomParams wnd:
 	RoomParamsLeft   := 0;
 	RoomParamsTop    := MapHeight;
 	RoomParamsWidth  := MapLeft;
-	RoomParamsHeight := 100; //*h GetSystemMetrics(SM_CYMAXIMIZED) - RoomParamsTop - 2 * yedge;
+	RoomParamsHeight := GetMetrics(smYMaximized) - RoomParamsTop - 2 * yedge;
 	RoomParamsVisible := true;
 
 	// log wnd:

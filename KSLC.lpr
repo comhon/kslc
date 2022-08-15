@@ -49,7 +49,7 @@ uses
 
 
 var
-	gProcessingException: boolean = false;
+	//*h gProcessingException: boolean = false;
 	dlgOpen: TOpenDialog;
 	dlg: TdlgInstalledLevelList;
 
@@ -139,7 +139,7 @@ begin
 
 		if (MessageDlg('KSLC has crashed. The author asks that You post the contents of the Log tab at the KSLC bugreport forum.'#13#10#13#10'Would You like to open the KSLC bug forum in a browser now?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
 		begin
-			ShellExecute(0, 'open', 'http://xoft.cz/forum', nil, nil, SW_SHOWNORMAL);
+			OpenURL('http://xoft.cz/forum');
 			if (Assigned(frmMain) and Assigned(frmMain.pcMain) and Assigned(frmMain.tsLog)) then
 			begin
 				frmMain.pcMain.ActivePage := frmMain.tsLog;
@@ -155,16 +155,6 @@ end;
 
 
 begin
-  if DirectoryExists('/home/comhon/games/ks') then
-  begin
-          //ShowMessage('/home/comhon/games/ks exists')
-  end;
-
-  if DirectoryExists('/home/comhon/games/ks/') then
-  begin
-          //ShowMessage('/home/comhon/games/ks/ exists')
-  end;
-
   Application.Initialize();
         InitializeSettings;
 
@@ -193,11 +183,7 @@ begin
 			//dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories.exe';
 			if (dlgOpen.Execute()) then
 			begin
-				gKSDir := ExtractFilePath(dlgOpen.Filename);
-				if (gKSDir[Length(gKSDir)] <> '/') then
-				begin
-					gKSDir := gKSDir + '/';
-				end;
+				gKSDir := IncludeTrailingPathDelimiter(ExtractFilePath(dlgOpen.Filename));
 				gLog.Log(LOG_INFO, 'Knytt Stories directory set to "' + gKSDir + '"');
 			end
 			else
@@ -211,7 +197,6 @@ begin
 		frmMain.BringToFront();
 		Application.BringToFront();
 	end;
-        //gKSDir:='/home/comhon/games/ks/';
 
 	gLog.Log(LOG_INFO, 'Knytt Stories directory is "' + gKSDir + '"');
 	gLog.Log(LOG_INFO, 'Initialization complete, starting main window');

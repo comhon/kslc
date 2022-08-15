@@ -603,10 +603,10 @@ var
 	fnam: string;
 begin
 	Img := TPortableNetworkGraphic.Create();
-	fnam := iLevelDir + 'Tilesets/Tileset' + IntToStr(Number) + '.png';
+	fnam := ConcatPaths([iLevelDir,'Tilesets','Tileset' + IntToStr(Number) + '.png']);
 	if not(FileExists(fnam)) then
 	begin
-		fnam := gKSDir + 'Data/Tilesets/Tileset' + IntToStr(Number) + '.png';
+		fnam := ConcatPaths([gKSDir,'Data','Tilesets','Tileset' + IntToStr(Number) + '.png']);
 	end;
 	if Assigned(Log) then Log.Log(LOG_INFO, 'Loading tileset #' + IntToStr(Number) + ' from file "' + fnam + '"');
 	try
@@ -1225,10 +1225,10 @@ procedure TKSLevel.LoadBackground(iNumber: integer);
 var
 	fnam: string;
 begin
-	fnam := LevelDir + 'Gradients/Gradient' + IntToStr(iNumber) + '.png';
+	fnam := ConcatPaths([LevelDir,'Gradients','Gradient' + IntToStr(iNumber) + '.png']);
 	if not(FileExists(fnam)) then
 	begin
-		fnam := gKSDir + 'Data/Gradients/Gradient' + IntToStr(iNumber) + '.png';
+		fnam := ConcatPaths([gKSDir,'Data','Gradients','Gradient' + IntToStr(iNumber) + '.png']);
 	end;
 	if Assigned(Log) then Log.Log(LOG_INFO, 'Loading background #' + IntToStr(iNumber) + ' from file "' + fnam + '"');
 	try
@@ -1628,7 +1628,7 @@ begin
 		Exit;
 	end;
 
-	fnam := gKSDir + 'Data/Objects/Bank' + IntToStr(Bank) + '/Object' + IntToStr(ID) + '.png';
+	fnam := gKSDir + ConcatPaths(['Data','Objects','Bank' + IntToStr(Bank),'Object' + IntToStr(ID) + '.png']);
 	if not(FileExists(fnam)) then
 	begin
 		Exit;

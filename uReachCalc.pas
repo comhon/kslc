@@ -1167,10 +1167,6 @@ begin
 	if Assigned(SysLog) then
 	begin
 		SysLog.Log(iLevel, txt);
-	end
-	else
-	begin
-		//*h OutputDebugString(PChar(txt + #13#10));
 	end;
 end;
 
@@ -1180,13 +1176,7 @@ end;
 
 initialization
 	// find the temporary path, create subfolder:
-        //*h
-        (*
-        SetLength(TempPath, MAX_PATH);
-	SetLength(TempPath, GetTempPath(MAX_PATH, @(TempPath[1])));
-        *)
-	if (TempPath = '') then TempPath := '/home/comhon';
-	if (TempPath[Length(TempPath)] <> '/') then TempPath := TempPath + '/';
+	TempPath := IncludeTrailingPathDelimiter(GetTempDir(false));
 	TempPath := TempPath + '.KSLC';
 	if not(DirectoryExists(TempPath)) then
 	begin
