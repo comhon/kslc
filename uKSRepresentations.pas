@@ -936,11 +936,7 @@ var
 	i: integer;
 begin
 	FileName := iFileName;
-	LevelDir := ExtractFilePath(FileName);
-	if (LevelDir <> '') then
-	begin
-		if (LevelDir[Length(LevelDir)] <> '\') then LevelDir := LevelDir + '\';
-	end;
+	LevelDir := IncludeTrailingPathDelimiter(ExtractFilePath(FileName));
 
 	if Assigned(Log) then
 	begin

@@ -15,6 +15,7 @@
       <Title Value="KSLC"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
+      <Icon Value="0"/>
       <Resources Count="2">
         <Resource_0 FileName="BBOK.bmp" Type="BITMAP" ResourceName="BBOK"/>
         <Resource_1 FileName="BBCANCEL.bmp" Type="BITMAP" ResourceName="BBCANCEL"/>

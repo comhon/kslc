@@ -97,11 +97,7 @@ begin
 			dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories.exe';
 			if (dlgOpen.Execute()) then
 			begin
-				eKSDir.Text := ExtractFilePath(dlgOpen.Filename);
-				if (eKSDir.Text[Length(eKSDir.Text)] <> '\') then
-				begin
-					eKSDir.Text := eKSDir.Text + '\';
-				end;
+				eKSDir.Text:=IncludeTrailingPathDelimiter(dlgOpen.Filename);
 			end
 	finally
 		dlgOpen.Free();

@@ -196,14 +196,14 @@ begin
 		Exit;
 	end;
 
-	if not(DirectoryExists(gKSDir + 'Worlds/')) then
+	if not(DirectoryExists(IncludeTrailingPathDelimiter(gKSDir+'Worlds'))) then
 	begin
 		Result := mrKSDirNoWorlds;
 		Exit;
 	end;
 
 	Worlds.Clear();
-	if (FindFirst(gKSDir + 'Worlds/*', faAnyFile, sr) = 0) then
+	if (FindFirst(gKSDir + 'Worlds' + PathDelim + '*', faAnyFile, sr) = 0) then
 	begin
 		repeat
                         if sr.Name = '..' then continue;
@@ -324,7 +324,7 @@ begin
 	begin
 		CurrentWorld := TWorldDesc(Worlds[i]);
 		// parse World.ini for author and name:
-		fnam := CurrentWorld.Path + '\world.ini';
+		fnam := ConcatPaths([CurrentWorld.Path,'World.ini']);
 		if not(FileExists(fnam)) then
 		begin
 			continue;

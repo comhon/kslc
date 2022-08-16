@@ -6,7 +6,6 @@ unit ufrmMain;
 interface
 
 uses
-	Messages,
 	SysUtils,
 	Variants,
 	Classes,
@@ -362,7 +361,7 @@ begin
 	CopyTo := Length(Result);
 	for i := Length(Result) downto 1 do
 	begin
-		if (Result[i] = '\') then
+		if (Result[i] = PathDelim) then
 		begin
 			if (i = Length(Result)) then
 			begin
@@ -1239,7 +1238,7 @@ begin
 			end;
 		end;
 
-		OpenFile(dlg.Path + 'map.bin');
+		OpenFile(dlg.Path + 'Map.bin');
 	finally
 		dlg.Release();
 	end;
@@ -1503,15 +1502,19 @@ begin
 end;
 
 
-procedure ShellExecSimple(exename, arguments, startdir: string);
+procedure ShellExecSimple(exename: string; arguments: array of string; startdir: string);
 var
 	proc: TProcess;
+        i: integer;
 begin
 	proc := TProcess.Create(nil);
 	try
 		proc.Executable := exename;
-		proc.Parameters.Add(arguments);
-		proc.CurrentDirectory:=startdir;
+                for i:= 0 to Length(arguments)-1 do
+                begin
+                     proc.Parameters.Add(arguments[i]);
+                end;
+                proc.CurrentDirectory:=startdir;
 
 		proc.Execute;
 	finally
@@ -1564,7 +1567,12 @@ begin
 		finally
 			CloseFile(f);
 		end;
-		ShellExecSimple( gKSDir + 'Knytt Stories.exe', '-Mode=Test', gKSDir);
+                {$IFDEF WINDOWS}
+                        ShellExecSimple( gKSDir + 'Knytt Stories.exe' ['-Mode=Test'], gKSDir);
+                {$ENDIF}
+                {$IFDEF UNIX}
+		        ShellExecSimple( 'wine', [gKSDir + 'Knytt Stories.exe','-Mode=Test'], gKSDir);
+                {$ENDIF}
 	finally
 		CurrentAction := caInsert;
 		IsRVMouseDown := false;		// to prevent drawing tiles upon mouseup / another mousemove
@@ -1708,8 +1716,6 @@ end;
 
 
 
-
-
 procedure TfrmMain.UpdateInsertionVector();
 var
 	pnt: TPoint;
@@ -1721,7 +1727,8 @@ begin
 	vis := false;
 	if (Assigned(TilesetSelection)) then
 	begin
-		//*h GetCursorPos(pnt);
+                pnt.x:=Mouse.CursorPos.x;
+                pnt.y:=Mouse.CursorPos.y;
 		pnt := rvMain.ScreenToClient(pnt);
 		InCurrentRoom := rvMain.CanvasToLogical(pnt, TileCoords, PixCoords, Room);
 		if (InCurrentRoom) then

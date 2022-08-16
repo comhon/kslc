@@ -308,7 +308,7 @@ begin
                   result:=1;
           smYCaption, smYMenu:
                   result:=15;
-          smYMaximized
+          smYMaximized:
                   result:=480;
           end;
      {$ENDIF}
