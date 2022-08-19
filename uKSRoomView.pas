@@ -10,7 +10,6 @@ uses
 	SysUtils,
 	Controls,
 	Forms,
-	Windows,
 	Graphics,
 	ExtCtrls,
 	Messages,

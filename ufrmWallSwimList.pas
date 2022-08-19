@@ -6,7 +6,6 @@ unit ufrmWallSwimList;
 interface
 
 uses
-	Windows,
 	Messages,
 	SysUtils,
 	Variants,

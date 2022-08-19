@@ -3,16 +3,19 @@ program KSLC;
 
 {$MODE Delphi}
 
+//{$DEFINE USEJCL}
+
 {%File 'Todo.txt'}
 
 uses
-	Windows,
-	Forms,
+        {$DEFINE UseCThreads} {$IFDEF UNIX}{$IFDEF UseCThreads} cthreads, {$ENDIF}{$ENDIF}
+
+        Forms,
 	Dialogs,
 	Controls, Interfaces,
 	SysUtils,
 	Classes,
-	ShellAPI,
+  
   ufrmMain in 'ufrmMain.pas' {frmMain},
   uKSRepresentations in 'uKSRepresentations.pas',
   ufrmViewPowerups in 'ufrmViewPowerups.pas' {frmViewPowerups},
@@ -37,9 +40,13 @@ uses
   udlgInstalledLevelList in 'udlgInstalledLevelList.pas' {dlgInstalledLevel},
   ufrmShiftsToHere in 'ufrmShiftsToHere.pas' {frmShiftsToHere},
   uMultiEvent in 'uMultiEvent.pas',
-  uKSRoomView in 'uKSRoomView.pas'{//*h JCL not jet included in converted project,
+  uKSRoomView in 'uKSRoomView.pas'{$IFDEF USEJCL},{$ENDIF}
+  {$IFDEF USEJCL}
   JclDebug in '..\..\Lib\D6\JCL\source\jclDebug.pas',
-  JclHookExcept in '..\..\Lib\D6\JCL\source\JclHookExcept.pas'};
+  JclHookExcept in '..\..\Lib\D6\JCL\source\JclHookExcept.pas',
+  {$ENDIF};
+
+
 
 {$R *.res}
 
@@ -48,14 +55,13 @@ uses
 
 
 var
-	gProcessingException: boolean = false;
+	{$IFDEF USEJCL}gProcessingException: boolean = false;{$ENDIF}
 	dlgOpen: TOpenDialog;
 	dlg: TdlgInstalledLevelList;
 
 
 
-
-        {//*h JCL not jet included in converted project
+{$IFDEF USEJCL}
 
 // debugging functions using JCL are copied over from SiteFlow
 
@@ -86,8 +92,6 @@ begin
 		s.Free;
 	end;
 end;
-
-
 
 
 
@@ -138,7 +142,7 @@ begin
 
 		if (MessageDlg('KSLC has crashed. The author asks that You post the contents of the Log tab at the KSLC bugreport forum.'#13#10#13#10'Would You like to open the KSLC bug forum in a browser now?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
 		begin
-			ShellExecute(0, 'open', 'http://xoft.cz/forum', nil, nil, SW_SHOWNORMAL);
+			OpenURL('http://xoft.cz/forum');
 			if (Assigned(frmMain) and Assigned(frmMain.pcMain) and Assigned(frmMain.tsLog)) then
 			begin
 				frmMain.pcMain.ActivePage := frmMain.tsLog;
@@ -148,24 +152,22 @@ begin
 		gProcessingException := false;
 	end;
 end;
-        //}
 
-
-
+{$ENDIF}
 
 begin
-	Application.Initialize();
+  Application.Initialize();
         InitializeSettings;
 
 	gLog := TKSLog.Create(LOG_INFO);
 	gLog.Log(LOG_INFO, 'Initializing');
 
-        {//*h JCL not jet included in converted project
-	// initialize JCL debugging:
+        {$IFDEF JCLENA}
+        // initialize JCL debugging:
 	JclStackTrackingOptions := [stStack, stAllModules, stExceptFrame];
 	JclHookExceptions();
 	JclAddExceptNotifier(KSLCExceptionNotify);
-        }
+        {$ENDIF}
 
 	Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmViewPowerups, frmViewPowerups);
@@ -179,14 +181,10 @@ begin
 		try
 			dlgOpen.InitialDir := '.';
 			dlgOpen.Title := 'Where is your Knytt Stories exe:';
-			dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories.exe';
+			//dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories.exe';
 			if (dlgOpen.Execute()) then
 			begin
-				gKSDir := ExtractFilePath(dlgOpen.Filename);
-				if (gKSDir[Length(gKSDir)] <> '\') then
-				begin
-					gKSDir := gKSDir + '\';
-				end;
+				gKSDir := IncludeTrailingPathDelimiter(ExtractFilePath(dlgOpen.Filename));
 				gLog.Log(LOG_INFO, 'Knytt Stories directory set to "' + gKSDir + '"');
 			end
 			else
@@ -200,6 +198,7 @@ begin
 		frmMain.BringToFront();
 		Application.BringToFront();
 	end;
+
 	gLog.Log(LOG_INFO, 'Knytt Stories directory is "' + gKSDir + '"');
 	gLog.Log(LOG_INFO, 'Initialization complete, starting main window');
 	gSettings.SetForms();
@@ -216,7 +215,7 @@ begin
 				Exit;
 			end;
 
-			mrKSDirNoWorlds:
+			mrKSDirNoWorlds,mrNoWorldFound:
 			begin
 				ShowMessage('There are no levels installed in the KS folder. Please use View->Settings to check and set KS folder.'#13#10#13#10'Normal file open will commence now.');
 				frmMain.actFileOpenExecute(nil);
@@ -229,7 +228,7 @@ begin
 			end;
 		end;
 
-		frmMain.OpenFile(dlg.Path + 'map.bin');
+		frmMain.OpenFile(dlg.Path + 'Map.bin');
 	finally
 		dlg.Release();
 	end;

@@ -5,8 +5,8 @@ unit udlgInstalledLevelList;
 interface
 
 uses
-	Windows,
-	Messages,
+        {$DEFINE UseCThreads} {$IFDEF UNIX}{$IFDEF UseCThreads} cthreads, {$ENDIF}{$ENDIF}
+        Messages,
 	SysUtils,
 	Variants,
 	Classes,
@@ -121,6 +121,7 @@ type
 
 
 
+
 implementation
 
 uses
@@ -188,26 +189,29 @@ var
 	li: TListItem;
 	i: integer;
 begin
-	if not(DirectoryExists(gKSDir)) then
+        //ShowMessage(gKSDir);
+        if not(DirectoryExists(gKSDir)) then
 	begin
 		Result := mrKSDirNotFound;
 		Exit;
 	end;
 
-	if not(DirectoryExists(gKSDir + 'Worlds\')) then
+	if not(DirectoryExists(IncludeTrailingPathDelimiter(gKSDir+'Worlds'))) then
 	begin
 		Result := mrKSDirNoWorlds;
 		Exit;
 	end;
 
 	Worlds.Clear();
-	if (FindFirst(gKSDir + 'Worlds\*.*', faAnyFile, sr) = 0) then
+	if (FindFirst(gKSDir + 'Worlds' + PathDelim + '*', faAnyFile, sr) = 0) then
 	begin
 		repeat
-			wrld := TWorldDesc.Create();
-			wrld.Path := gKSDir + 'Worlds\' + sr.Name + '\';
+                        if sr.Name = '..' then continue;
+                        if sr.Name = '.' then continue;
+                        wrld := TWorldDesc.Create();
+			wrld.Path := IncludeTrailingpathDelimiter(ConcatPaths([gKSDir,'Worlds',sr.Name]));
 			wrld.DirName := sr.Name;
-			if (not(FileExists(wrld.Path + 'map.bin')) or not(FileExists(wrld.Path + 'world.ini'))) then
+			if (not(FileExists(wrld.Path + 'Map.bin')) or not(FileExists(wrld.Path + 'World.ini'))) then
 			begin
 				continue;
 			end;
@@ -292,6 +296,7 @@ end;
 
 
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TWorldParamUpdater:
 
@@ -319,17 +324,17 @@ begin
 	begin
 		CurrentWorld := TWorldDesc(Worlds[i]);
 		// parse World.ini for author and name:
-		fnam := CurrentWorld.Path + '\world.ini';
+		fnam := ConcatPaths([CurrentWorld.Path,'World.ini']);
 		if not(FileExists(fnam)) then
 		begin
 			continue;
 		end;
 		WorldName := '';
-		SetLength(WorldName, bufsize);
-		SetLength(WorldName, GetPrivateProfileString('World', 'Name', '', @(WorldName[1]), bufsize, PChar(fnam)));
+		//*h SetLength(WorldName, bufsize);
+		//*h SetLength(WorldName, GetPrivateProfileString('World', 'Name', '', @(WorldName[1]), bufsize, PChar(fnam)));
 		Author := '';
-		SetLength(Author, bufsize);
-		SetLength(Author, GetPrivateProfileString('World', 'Author', '', @(Author[1]), bufsize, PChar(fnam)));
+		//*h SetLength(Author, bufsize);
+		//*h SetLength(Author, GetPrivateProfileString('World', 'Author', '', @(Author[1]), bufsize, PChar(fnam)));
 		Synchronize(DoUpdateOne);
 	end;
 end;
@@ -345,7 +350,6 @@ begin
 		OnUpdate(CurrentWorld, WorldName, Author);
 	end;
 end;
-
 
 
 

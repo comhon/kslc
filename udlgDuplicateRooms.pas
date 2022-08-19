@@ -5,7 +5,6 @@ unit udlgDuplicateRooms;
 interface
 
 uses
-	Windows,
 	Messages,
 	SysUtils,
 	Variants,
