@@ -3,6 +3,8 @@ program KSLC;
 
 {$MODE Delphi}
 
+//{$DEFINE USEJCL}
+
 {%File 'Todo.txt'}
 
 uses
@@ -13,7 +15,7 @@ uses
 	Controls, Interfaces,
 	SysUtils,
 	Classes,
-	//*hShellAPI,
+  
   ufrmMain in 'ufrmMain.pas' {frmMain},
   uKSRepresentations in 'uKSRepresentations.pas',
   ufrmViewPowerups in 'ufrmViewPowerups.pas' {frmViewPowerups},
@@ -38,9 +40,13 @@ uses
   udlgInstalledLevelList in 'udlgInstalledLevelList.pas' {dlgInstalledLevel},
   ufrmShiftsToHere in 'ufrmShiftsToHere.pas' {frmShiftsToHere},
   uMultiEvent in 'uMultiEvent.pas',
-  uKSRoomView in 'uKSRoomView.pas'{//*h JCL not jet included in converted project,
+  uKSRoomView in 'uKSRoomView.pas'{$IFDEF USEJCL},{$ENDIF}
+  {$IFDEF USEJCL}
   JclDebug in '..\..\Lib\D6\JCL\source\jclDebug.pas',
-  JclHookExcept in '..\..\Lib\D6\JCL\source\JclHookExcept.pas'};
+  JclHookExcept in '..\..\Lib\D6\JCL\source\JclHookExcept.pas',
+  {$ENDIF};
+
+
 
 {$R *.res}
 
@@ -49,14 +55,13 @@ uses
 
 
 var
-	//*h gProcessingException: boolean = false;
+	{$IFDEF USEJCL}gProcessingException: boolean = false;{$ENDIF}
 	dlgOpen: TOpenDialog;
 	dlg: TdlgInstalledLevelList;
 
 
 
-
-        {//*h JCL not jet included in converted project
+{$IFDEF USEJCL}
 
 // debugging functions using JCL are copied over from SiteFlow
 
@@ -87,8 +92,6 @@ begin
 		s.Free;
 	end;
 end;
-
-
 
 
 
@@ -149,10 +152,8 @@ begin
 		gProcessingException := false;
 	end;
 end;
-        //}
 
-
-
+{$ENDIF}
 
 begin
   Application.Initialize();
@@ -161,12 +162,12 @@ begin
 	gLog := TKSLog.Create(LOG_INFO);
 	gLog.Log(LOG_INFO, 'Initializing');
 
-        {//*h JCL not jet included in converted project
-	// initialize JCL debugging:
+        {$IFDEF JCLENA}
+        // initialize JCL debugging:
 	JclStackTrackingOptions := [stStack, stAllModules, stExceptFrame];
 	JclHookExceptions();
 	JclAddExceptNotifier(KSLCExceptionNotify);
-        }
+        {$ENDIF}
 
 	Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmViewPowerups, frmViewPowerups);

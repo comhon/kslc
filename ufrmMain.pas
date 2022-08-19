@@ -1568,7 +1568,7 @@ begin
 			CloseFile(f);
 		end;
                 {$IFDEF WINDOWS}
-                        ShellExecSimple( gKSDir + 'Knytt Stories.exe' ['-Mode=Test'], gKSDir);
+                        ShellExecSimple( gKSDir + 'Knytt Stories.exe', ['-Mode=Test'], gKSDir);
                 {$ENDIF}
                 {$IFDEF UNIX}
 		        ShellExecSimple( 'wine', [gKSDir + 'Knytt Stories.exe','-Mode=Test'], gKSDir);
