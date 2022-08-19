@@ -5,8 +5,6 @@ unit uKSObjectChooser;
 interface
 
 uses
-	Windows,
-	Messages,
 	SysUtils,
 	Classes,
 	Graphics,
@@ -31,6 +29,7 @@ type
 		procedure fSetBank(iVal: integer);
 		procedure fSetObj (iVal: integer);
 
+		procedure CanvasTextOutCentered(X, Y: integer; aText: string);
 		procedure Paint(); override;
 		procedure ReloadBankImage();
 		procedure ReloadObjImage();
@@ -167,6 +166,10 @@ end;
 
 
 
+procedure TKSObjectChooser.CanvasTextOutCentered(X,Y: integer; aText: string);
+begin
+	Canvas.TextOut(X-Canvas.TextWidth(aText)div 2,Y,aText);
+end;
 
 procedure TKSObjectChooser.Paint();
 begin
@@ -193,15 +196,15 @@ begin
 	Canvas.FillRect(Rect(0, 0, Width, Height));
 	Canvas.Font.Size := -18;
 	Canvas.Font.Name := 'Arial';
-	SetTextAlign(Canvas.Handle, TA_CENTER or TA_TOP);
-	SetBkMode(Canvas.Handle, TRANSPARENT);
-	Canvas.TextOut(Width div 2, 1, 'Bank: ' + IntToStr(fBank));
+	Canvas.Brush.Style := bsClear;
+
+	CanvasTextOutCentered(Width div 2, 1, 'Bank: ' + IntToStr(fBank));
 	if (Assigned(BankImage)) then
 	begin
 		Canvas.Draw((Width - BankImage.Width) div 2, 70 - BankImage.Height div 2, BankImage);
 	end;
 
-	Canvas.TextOut(Width div 2, 121, 'Obj: ' + IntToStr(fObj));
+	CanvasTextOutCentered(Width div 2, 121, 'Obj: ' + IntToStr(fObj));
 	if (Assigned(ObjImage)) then
 	begin
 		Canvas.Draw((Width - ObjImage.Width) div 2, 190 - ObjImage.Height div 2, ObjImage);
@@ -214,7 +217,7 @@ end;
 
 procedure TKSObjectChooser.ReloadBankImage();
 begin
-	ReloadImage(BankImage, gKSDir + 'Data\Objects\Bank' + IntToStr(fBank) + '\Bank.png');
+	ReloadImage(BankImage, ConcatPaths([gKSDir,'Data','Objects','Bank' + IntToStr(fBank),'Bank.png']));
 	fShouldReloadBankImage := false;
 end;
 
@@ -224,7 +227,7 @@ end;
 
 procedure TKSObjectChooser.ReloadObjImage();
 begin
-	ReloadImage(ObjImage, gKSDir + 'Data\Objects\Bank' + IntToStr(fBank) + '\Object' + IntToStr(fObj) + '.png');
+	ReloadImage(ObjImage, ConcatPaths([gKSDir,'Data','Objects','Bank' + IntToStr(fBank),'Object'+ IntToStr(fObj) + '.png']));
 	fShouldReloadObjImage := false;
 end;
 

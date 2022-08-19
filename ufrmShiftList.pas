@@ -5,7 +5,6 @@ unit ufrmShiftList;
 interface
 
 uses
-	Windows,
 	Messages,
 	SysUtils,
 	Variants,

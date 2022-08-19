@@ -9,7 +9,6 @@ uses
 	Classes,
 	Controls,
 	Forms,
-	Windows,
 	Graphics,
 	ExtCtrls,
 	Messages,
@@ -446,7 +445,7 @@ begin
 		for i := 0 to fLayHei - 1 do
 		begin
 			Move(ptr^, (bmp.ScanLine[i])^, fLayWid * 4);
-			integer(ptr) := integer(ptr) + fLayWid * 4;
+			//*h integer(ptr) := integer(ptr) + fLayWid * 4;
 		end;
 
 		bmp.Canvas.Brush.Color := $ffffff;

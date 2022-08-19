@@ -5,7 +5,6 @@ unit uKSTilesetView;
 interface
 
 uses
-	Windows,
 	Messages,
 	SysUtils,
 	Classes,
@@ -302,7 +301,7 @@ begin
 		Canvas.FrameRect(Rect(0, 0, Width, Height));
 		Exit;
 	end;
-	OutputDebugString(PChar('TKSTilesetView.Paint(): fTileset = 0x' + IntToHex(integer(fTileset), 8)));
+	//*h OutputDebugString(PChar('TKSTilesetView.Paint(): fTileset = 0x' + IntToHex(integer(fTileset), 8)));
 	if (not(Assigned(fTileset)) or not(Assigned(fTileset.Img))) then
 	begin
 		Canvas.Brush.Color := Color;

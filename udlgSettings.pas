@@ -5,7 +5,6 @@ unit udlgSettings;
 interface
 
 uses
-	Windows,
 	Messages,
 	SysUtils,
 	Variants,
@@ -68,10 +67,7 @@ uses
 procedure TdlgSettings.tlOKClick(Sender: TObject);
 begin
 	gKSDir := eKSDir.Text;
-	if (gKSDir[Length(gKSDir)] <> '\') then
-	begin
-		gKSDir := gKSDir + '\';
-	end;
+	gKSDir := IncludeTrailingPathDelimiter(gKSDir);
 	gLog.Log(LOG_INFO, 'Knytt Stories directory set to "' + gKSDir + '"');
 	gSettings.AllowWebVersionCheck := chbAllowWebVersionCheck.Checked;
 	gSettings.AllowWebStats := chbAllowWebStats.Checked;
@@ -101,11 +97,7 @@ begin
 			dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories.exe';
 			if (dlgOpen.Execute()) then
 			begin
-				eKSDir.Text := ExtractFilePath(dlgOpen.Filename);
-				if (eKSDir.Text[Length(eKSDir.Text)] <> '\') then
-				begin
-					eKSDir.Text := eKSDir.Text + '\';
-				end;
+				eKSDir.Text:=IncludeTrailingPathDelimiter(dlgOpen.Filename);
 			end
 	finally
 		dlgOpen.Free();
