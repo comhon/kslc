@@ -11,7 +11,8 @@ uses
 	Controls,
 	Graphics,
 	uKSRepresentations,
-	uVectors;
+	uVectors,
+	uKSGraphic;
 
 
 
@@ -32,7 +33,7 @@ type
 		fOnMouseEnter: TNotifyEvent;
 
 		bmpBackground: TBitmap;
-		bmpTileset: TBitmap;
+		imgTileset: TKSImage;
 
 		procedure fSetTileset(iTileset: TKSTileset);
 		procedure fSetBgColor1(iVal: TColor);
@@ -145,10 +146,7 @@ begin
 	Constraints.MaxWidth := Width;
 
 	// offscreen tileset buffer:
-	bmpTileset := TBitmap.Create();
-	bmpTileset.PixelFormat := pf32Bit;
-	bmpTileset.Width := Width;
-	bmpTileset.Height := Height;
+	imgTileset:=TKSImage.Create(Width,Height);
 
 	// background buffer:
 	bmpBackground := TBitmap.Create();
@@ -166,7 +164,7 @@ end;
 
 destructor TKSTilesetView.Destroy();
 begin
-	Clear();
+	imgTileset.Free();
 	inherited Destroy();
 end;
 
@@ -179,6 +177,7 @@ begin
 	fNumVectors := 0;
 	fCapVectors := 0;
 	SetLength(fVector, 0);
+	fShouldRedrawTileset := true;
 end;
 
 
@@ -204,8 +203,9 @@ procedure TKSTilesetView.RedrawTileset();
 begin
 	if (Assigned(fTileset) and Assigned(fTileset.Img)) then
 	begin
-		bmpTileset.Canvas.Draw(0, 0, bmpBackground);
-		bmpTileset.Canvas.Draw(0, 0, fTileset.Img);
+		imgTileset.Clear;
+		imgTileset.AddLayer(bmpBackground,0,0);
+ 		imgTileset.AddLayer(fTileset.Img,0,0);
 	end;
 	fShouldRedrawTileset := false;
 end;
@@ -276,11 +276,7 @@ begin
 		end;
 	end;		// for y - ScanLine[]
 
-	if (Assigned(fTileset) and Assigned(fTileset.Img)) then
-	begin
-		bmpTileset.Canvas.Draw(0, 0, bmpBackground);
-		bmpTileset.Canvas.Draw(0, 0, fTileset.Img);
-	end;
+	fShouldRedrawTileset := true;
 
 	Invalidate();
 end;
@@ -316,10 +312,9 @@ begin
 
 	bmp := TBitmap.Create();
 	try
-		bmp.PixelFormat := pf32Bit;
-		bmp.Width := Width;
-		bmp.Height := Height;
-		bmp.Canvas.Draw(0, 0, bmpTileset);
+		bmp.Width := imgTileset.Width;
+		bmp.Height := imgTileset.Height;
+		imgTileset.Draw(bmp.Canvas,0,0);
 
 		for i := 0 to fNumVectors - 1 do
 		begin

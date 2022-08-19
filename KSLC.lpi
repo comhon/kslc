@@ -15,6 +15,12 @@
       <Title Value="KSLC"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="True"/>
+        <TextName Value="Comhon.KSLC.Editor"/>
+        <TextDesc Value="KSLC Editor Application"/>
+      </XPManifest>
       <Icon Value="0"/>
       <Resources Count="2">
         <Resource_0 FileName="BBOK.bmp" Type="BITMAP" ResourceName="BBOK"/>
@@ -24,7 +30,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MinorVersionNr Value="3"/>
-      <RevisionNr Value="17"/>
+      <RevisionNr Value="18"/>
       <StringTable FileDescription="Knytt Stories Level Composer" LegalCopyright="Made since 2007 by _MadMaXoft(o)" OriginalFilename="KSLC.exe"/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -73,7 +79,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="31">
+    <Units Count="32">
       <Unit0>
         <Filename Value="KSLC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -122,7 +128,9 @@
       <Unit10>
         <Filename Value="udlgAbout.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgAbout"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit10>
       <Unit11>
         <Filename Value="udlgSettings.pas"/>
@@ -213,6 +221,10 @@
         <Filename Value="BBOK.bmp"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
+      <Unit31>
+        <Filename Value="uKSRender.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit31>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

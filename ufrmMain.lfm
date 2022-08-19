@@ -1,7 +1,7 @@
 object frmMain: TfrmMain
-  Left = 0
+  Left = 128
   Height = 600
-  Top = 6
+  Top = 128
   Width = 967
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Knytt Stories Level Composer'
@@ -21,7 +21,7 @@ object frmMain: TfrmMain
   OnMouseWheel = FormMouseWheel
   OnShow = FormShow
   Position = poDefaultPosOnly
-  LCLVersion = '2.2.0.4'
+  LCLVersion = '2.0.12.0'
   Scaled = False
   object sbMain: TStatusBar
     Left = 0
@@ -57,6 +57,7 @@ object frmMain: TfrmMain
     Align = alClient
     TabIndex = 0
     TabOrder = 2
+    OnChange = pcMainChange
     object tsTiles: TTabSheet
       Caption = 'T&iles'
       ClientHeight = 530

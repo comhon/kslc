@@ -8,7 +8,8 @@ uses
 	SysUtils,
 	Classes,
 	Graphics,
-	Controls;
+	Controls,
+	uKSGraphic;
 
 
 
@@ -20,8 +21,8 @@ type
 		fBank: integer;
 		fObj: integer;
 
-		BankImage: TPortableNetworkGraphic;
-		ObjImage: TPortableNetworkGraphic;
+		BankImage: TKSImage;
+		ObjImage: TKSImage;
 
 		fShouldReloadBankImage: boolean;
 		fShouldReloadObjImage: boolean;
@@ -33,7 +34,7 @@ type
 		procedure Paint(); override;
 		procedure ReloadBankImage();
 		procedure ReloadObjImage();
-		procedure ReloadImage(var Image: TPortableNetworkGraphic; iFileName: string);
+		procedure ReloadImage(var Image: TKSImage; iFileName: string);
 
 		procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
 
@@ -112,8 +113,8 @@ end;
 constructor TKSObjectChooser.Create(AOwner: TComponent);
 begin
 	inherited Create(AOwner);
-	BankImage := TPortableNetworkGraphic.Create();
-	ObjImage := TPortableNetworkGraphic.Create();
+	BankImage := TKSImage.Create();
+	ObjImage := TKSImage.Create();
 	fBank := 0;
 	fObj := 0;
 	Width := 100;
@@ -201,13 +202,13 @@ begin
 	CanvasTextOutCentered(Width div 2, 1, 'Bank: ' + IntToStr(fBank));
 	if (Assigned(BankImage)) then
 	begin
-		Canvas.Draw((Width - BankImage.Width) div 2, 70 - BankImage.Height div 2, BankImage);
+		BankImage.Draw(Canvas,(Width - BankImage.Width) div 2, 70 - BankImage.Height div 2);
 	end;
 
 	CanvasTextOutCentered(Width div 2, 121, 'Obj: ' + IntToStr(fObj));
 	if (Assigned(ObjImage)) then
 	begin
-		Canvas.Draw((Width - ObjImage.Width) div 2, 190 - ObjImage.Height div 2, ObjImage);
+		ObjImage.Draw(Canvas,(Width - ObjImage.Width) div 2, 190 - ObjImage.Height div 2);
 	end;
 end;
 
@@ -235,7 +236,7 @@ end;
 
 
 
-procedure TKSObjectChooser.ReloadImage(var Image: TPortableNetworkGraphic; iFileName: string);
+procedure TKSObjectChooser.ReloadImage(var Image: TKSImage; iFileName: string);
 begin
 	if not(FileExists(iFileName)) then
 	begin
@@ -243,7 +244,7 @@ begin
 		Exit;
 	end;
 	try
-		Image.LoadFromFile(iFileName);
+		Image.LoadFromPNGFile(iFileName);
 	except
 		Image.Clear;
 	end;
