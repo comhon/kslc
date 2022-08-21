@@ -6,9 +6,8 @@ unit uKSLog;
 interface
 
 uses
-        {$DEFINE UseCThreads} {$IFDEF UNIX}{$IFDEF UseCThreads} cthreads, {$ENDIF}{$ENDIF}
         Classes,
-	SyncObjs,
+		SyncObjs,
         uMultiEvent;
 
 
@@ -76,13 +75,16 @@ uses
 
 constructor TKSLog.Create(iLevel: integer);
 begin
-        Level := iLevel;
+	inherited Create(true);
+	Level := iLevel;
 	Items := TStringList.Create();
 	CS := TCriticalSection.Create();
 	ShouldUpdate := false;
 	OnUpdate := TMultiEvent.Create();
 	Resume();
 end;
+
+
 
 
 

@@ -10,9 +10,9 @@ uses
 	Classes,
 	Controls,
 	Graphics,
+	uKSGraphic,
 	uKSRepresentations,
-	uVectors,
-	uKSGraphic;
+	uVectors;
 
 
 
@@ -297,7 +297,6 @@ begin
 		Canvas.FrameRect(Rect(0, 0, Width, Height));
 		Exit;
 	end;
-	//*h OutputDebugString(PChar('TKSTilesetView.Paint(): fTileset = 0x' + IntToHex(integer(fTileset), 8)));
 	if (not(Assigned(fTileset)) or not(Assigned(fTileset.Img))) then
 	begin
 		Canvas.Brush.Color := Color;

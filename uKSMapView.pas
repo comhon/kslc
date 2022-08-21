@@ -156,9 +156,8 @@ begin
 	NumVectors := 0;
 	Selection := TList.Create();
 	SelectionRect := TVGRect.Create(0, 0, 0, 0, $7fff00);
-        SelectionRect.Visible:=false;
-        RegVector(SelectionRect);
-
+    SelectionRect.Visible:=false;
+    RegVector(SelectionRect);
 end;
 
 
@@ -535,11 +534,11 @@ begin
 			IsMouseDown := true;
 			if (FAllowMultiSelect) then
 			begin
-                                SelectionRect.Visible := true;
-                                BeginX := CanvasXToRoomX(X);
-                                EndX := BeginX;
+                SelectionRect.Visible := true;
+                BeginX := CanvasXToRoomX(X);
+				EndX := BeginX;
 				BeginY := CanvasYToRoomY(Y);
-                                EndY := BeginY;
+				EndY := BeginY;
 			end;
 			MouseMove(Shift, X, Y);
 		end;

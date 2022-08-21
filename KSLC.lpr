@@ -3,16 +3,21 @@ program KSLC;
 
 {$MODE Delphi}
 
+{$IFDEF UNIX} 
+	{$DEFINE UseCThreads}
+{$ENDIF}
+
 //{$DEFINE USEJCL}
 
 {%File 'Todo.txt'}
 
 uses
-        {$DEFINE UseCThreads} {$IFDEF UNIX}{$IFDEF UseCThreads} cthreads, {$ENDIF}{$ENDIF}
-
-        Forms,
+    
+	{$IFDEF UseCThreads} cthreads,{$ENDIF}
+	Interfaces, 
+    Forms,
 	Dialogs,
-	Controls, Interfaces,
+	Controls,
 	SysUtils,
 	Classes,
   
@@ -40,11 +45,12 @@ uses
   udlgInstalledLevelList in 'udlgInstalledLevelList.pas' {dlgInstalledLevel},
   ufrmShiftsToHere in 'ufrmShiftsToHere.pas' {frmShiftsToHere},
   uMultiEvent in 'uMultiEvent.pas',
-  uKSRoomView in 'uKSRoomView.pas'{$IFDEF USEJCL},{$ENDIF}
+  uKSRoomView in 'uKSRoomView.pas',
   {$IFDEF USEJCL}
   JclDebug in '..\..\Lib\D6\JCL\source\jclDebug.pas',
   JclHookExcept in '..\..\Lib\D6\JCL\source\JclHookExcept.pas',
-  {$ENDIF};
+  {$ENDIF}
+  uKSRender;
 
 
 
@@ -55,9 +61,12 @@ uses
 
 
 var
-	{$IFDEF USEJCL}gProcessingException: boolean = false;{$ENDIF}
+	{$IFDEF USEJCL}
+	gProcessingException: boolean = false;
+	{$ENDIF}
 	dlgOpen: TOpenDialog;
 	dlg: TdlgInstalledLevelList;
+
 
 
 
@@ -92,6 +101,8 @@ begin
 		s.Free;
 	end;
 end;
+
+
 
 
 
@@ -155,19 +166,22 @@ end;
 
 {$ENDIF}
 
+
+
+
 begin
   Application.Initialize();
-        InitializeSettings;
+  InitializeSettings;
 
 	gLog := TKSLog.Create(LOG_INFO);
 	gLog.Log(LOG_INFO, 'Initializing');
 
-        {$IFDEF JCLENA}
+    {$IFDEF JCLENA}
         // initialize JCL debugging:
 	JclStackTrackingOptions := [stStack, stAllModules, stExceptFrame];
 	JclHookExceptions();
 	JclAddExceptNotifier(KSLCExceptionNotify);
-        {$ENDIF}
+    {$ENDIF}
 
 	Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmViewPowerups, frmViewPowerups);
@@ -198,7 +212,6 @@ begin
 		frmMain.BringToFront();
 		Application.BringToFront();
 	end;
-
 	gLog.Log(LOG_INFO, 'Knytt Stories directory is "' + gKSDir + '"');
 	gLog.Log(LOG_INFO, 'Initialization complete, starting main window');
 	gSettings.SetForms();
@@ -235,5 +248,5 @@ begin
 
 	Application.Run();
 	gSettings.GetForms();
-        FinalizeSettings;
+    FinalizeSettings;
 end.

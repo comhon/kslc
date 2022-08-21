@@ -5,8 +5,7 @@ unit udlgInstalledLevelList;
 interface
 
 uses
-        {$DEFINE UseCThreads} {$IFDEF UNIX}{$IFDEF UseCThreads} cthreads, {$ENDIF}{$ENDIF}
-        Messages,
+    Messages,
 	SysUtils,
 	Variants,
 	Classes,
@@ -19,6 +18,7 @@ uses
 	StdCtrls,
 	Contnrs,
 	Buttons,
+	IniFiles,
 	uSettings;
 
 
@@ -121,7 +121,6 @@ type
 
 
 
-
 implementation
 
 uses
@@ -189,8 +188,7 @@ var
 	li: TListItem;
 	i: integer;
 begin
-        //ShowMessage(gKSDir);
-        if not(DirectoryExists(gKSDir)) then
+    if not(DirectoryExists(gKSDir)) then
 	begin
 		Result := mrKSDirNotFound;
 		Exit;
@@ -206,9 +204,9 @@ begin
 	if (FindFirst(gKSDir + 'Worlds' + PathDelim + '*', faAnyFile, sr) = 0) then
 	begin
 		repeat
-                        if sr.Name = '..' then continue;
-                        if sr.Name = '.' then continue;
-                        wrld := TWorldDesc.Create();
+            if sr.Name = '..' then continue;
+            if sr.Name = '.' then continue;
+            wrld := TWorldDesc.Create();
 			wrld.Path := IncludeTrailingpathDelimiter(ConcatPaths([gKSDir,'Worlds',sr.Name]));
 			wrld.DirName := sr.Name;
 			if (not(FileExists(wrld.Path + 'Map.bin')) or not(FileExists(wrld.Path + 'World.ini'))) then
@@ -296,7 +294,6 @@ end;
 
 
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TWorldParamUpdater:
 
@@ -319,6 +316,7 @@ const
 var
 	i: integer;
 	fnam: string;
+	lIni: TIniFile;
 begin
 	for i := 0 to Worlds.Count - 1 do
 	begin
@@ -329,12 +327,14 @@ begin
 		begin
 			continue;
 		end;
-		WorldName := '';
-		//*h SetLength(WorldName, bufsize);
-		//*h SetLength(WorldName, GetPrivateProfileString('World', 'Name', '', @(WorldName[1]), bufsize, PChar(fnam)));
-		Author := '';
-		//*h SetLength(Author, bufsize);
-		//*h SetLength(Author, GetPrivateProfileString('World', 'Author', '', @(Author[1]), bufsize, PChar(fnam)));
+		lIni:=TIniFile.Create(fnam);
+		try
+			WorldName := lIni.ReadString('World','Name','');
+			Author := lIni.ReadString('World','Author','');
+		finally
+			lIni.Free();
+		end;
+
 		Synchronize(DoUpdateOne);
 	end;
 end;
@@ -350,6 +350,7 @@ begin
 		OnUpdate(CurrentWorld, WorldName, Author);
 	end;
 end;
+
 
 
 

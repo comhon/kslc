@@ -13,12 +13,11 @@ uses
 	Classes,
 	SysUtils,
 	Graphics,
-	gzio, //* Included Lazarus library for gzip
+	IntfGraphics,
 	uMultiEvent,
 	uKSObjects,
 	uKSObjPass,
-	uKSLog,
-        IntfGraphics,
+	uKSLog,        
 	uKSGraphic,
 	uKSRender;
 
@@ -336,7 +335,8 @@ var
 
 implementation
 
-//Previously used unit zlib1dll that was not included in the original source replaced with Lazarus implementation
+uses
+	gzio;
 
 
 

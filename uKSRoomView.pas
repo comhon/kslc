@@ -13,11 +13,11 @@ uses
 	Graphics,
 	ExtCtrls,
 	Messages,
-	uVectors,
-	uKSRepresentations,
 	IntfGraphics,
 	uKSGraphic,
-	uKSRender;
+	uKSRender,
+	uVectors,
+	uKSRepresentations;
 
 
 

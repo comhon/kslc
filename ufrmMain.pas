@@ -52,7 +52,6 @@ type
     actFileSave: TAction;
     actFileSaveAs: TAction;
     actFileExit: TAction;
-    KSMapView1: TKSMapView;
     mMain: TMainMenu;
     miFile: TMenuItem;
     miFileNew: TMenuItem;
@@ -1157,13 +1156,15 @@ end;
 function TfrmMain.GetCurrentVersion(): string;
 var
 	maj, min, rel, build: word;
+	IsDebug: boolean;
 begin
-        Exit;
-        if (ReadVersionInfo(ParamStr(0), maj, min, rel, build)) then
+	//*h not compatible yet  
+    (*
+	if (ReadVersionInfo(ParamStr(0), maj, min, rel, build)) then
 	begin
 		Result := IntToStr(maj) + '.' + IntToStr(min) + '.' + IntToStr(rel) + '.' + IntToStr(build);
 	end
-	else
+	else*)
 	begin
 		Result := 'unknown';
 	end;
@@ -1177,17 +1178,19 @@ function TfrmMain.IsVersionHigherThanCurrent(iVersion: string): boolean;
 var
 	cmaj, cmin, crel, cbui: word;
 	vmaj, vmin, vrel, vbui: word;
+	IsDebug: boolean;
 begin
-        Exit(false);
-
-        if not(ParseVersionString(iVersion, vmaj, vmin, vrel, vbui)) then
+    Exit(false);
+	//*h not compatible yet
+	(*
+    If not(ParseVersionString(iVersion, vmaj, vmin, vrel, vbui)) then
 	begin
 		// unreadable version from the web, never update
 		Result := false;
 		Exit;
 	end;
 
-	if not(ReadVersionInfo(ParamStr(0), cmaj, cmin, crel, cbui)) then
+	if not(ReadVersionInfo(ParamStr(0), cmaj, cmin, crel, cbui, IsDebug)) then
 	begin
 		// unreadable version info in file, always update
 		Result := true;
@@ -1197,6 +1200,7 @@ begin
 		((cmaj = vmaj) and (cmin < vmin)) or
 		((cmaj = vmaj) and (cmin = vmin) and (crel < vrel)) or
 		((cmaj = vmaj) and (cmin = vmin) and (crel = vrel) and (cbui < vbui));
+	*)
 end;
 
 
@@ -1572,12 +1576,12 @@ begin
 		finally
 			CloseFile(f);
 		end;
-                {$IFDEF WINDOWS}
-                        ShellExecSimple( gKSDir + 'Knytt Stories.exe', ['-Mode=Test'], gKSDir);
-                {$ENDIF}
-                {$IFDEF UNIX}
-		        ShellExecSimple( 'wine', [gKSDir + 'Knytt Stories.exe','-Mode=Test'], gKSDir);
-                {$ENDIF}
+        {$IFDEF WINDOWS}
+        ShellExecSimple( gKSDir + 'Knytt Stories.exe', ['-Mode=Test'], gKSDir);
+        {$ENDIF}
+        {$IFDEF UNIX}
+		ShellExecSimple( 'wine', [gKSDir + 'Knytt Stories.exe','-Mode=Test'], gKSDir);
+        {$ENDIF}
 	finally
 		CurrentAction := caInsert;
 		IsRVMouseDown := false;		// to prevent drawing tiles upon mouseup / another mousemove
@@ -1721,6 +1725,8 @@ end;
 
 
 
+
+
 procedure TfrmMain.UpdateInsertionVector();
 var
 	pnt: TPoint;
@@ -1732,9 +1738,7 @@ begin
 	vis := false;
 	if (Assigned(TilesetSelection)) then
 	begin
-                pnt.x:=Mouse.CursorPos.x;
-                pnt.y:=Mouse.CursorPos.y;
-		pnt := rvMain.ScreenToClient(pnt);
+        pnt := rvMain.ScreenToClient(Mouse.CursorPos);
 		InCurrentRoom := rvMain.CanvasToLogical(pnt, TileCoords, PixCoords, Room);
 		if (InCurrentRoom) then
 		begin

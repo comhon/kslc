@@ -5,8 +5,6 @@ unit uWebVersionCheckThread;
 interface
 
 uses
-        {$DEFINE UseCThreads} {$IFDEF UNIX}{$IFDEF UseCThreads} cthreads, {$ENDIF}{$ENDIF}
-        //*h WinInet,
         Classes;
 
 
@@ -16,6 +14,7 @@ uses
 
 type
 	TWebVersionRecvProc = procedure(Sender: TObject; WebVersion: string) of object;
+
 
 
 
@@ -36,6 +35,7 @@ type
 	protected
 		procedure Execute; override;
 	end;
+
 
 
 
@@ -101,6 +101,7 @@ end;
 
 
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TWebVersionCheckThread
 
@@ -154,12 +155,11 @@ begin
 	buffer[pos] := #0;
 	InternetCloseHandle(hData);
 	InternetCloseHandle(hINet);
-        WebVersion := string(buffer);
+    WebVersion := string(buffer);
         *)
-        WebVersion := 'ERROR';
+    WebVersion := 'ERROR';
 
-        Synchronize(RecvNotify)
-
+    Synchronize(RecvNotify);
 end;
 
 
@@ -179,4 +179,3 @@ end;
 
 
 end.
- 
