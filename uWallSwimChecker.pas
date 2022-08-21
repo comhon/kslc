@@ -159,15 +159,6 @@ var
 	i: integer;
 	r: TKSRoom;
 begin
-	// init: create tileset masks:
-	for i := 0 to iLevel.NumRooms - 1 do
-	begin
-		r := iLevel.Room[i];
-		r.Tileset[0].NeedMask();
-		r.Tileset[1].NeedMask();
-		r.TagInt := 0;
-	end;
-
 	for i := 0 to iLevel.NumRooms - 1 do
 	begin
 		r := iLevel.Room[i];

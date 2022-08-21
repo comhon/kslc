@@ -113,7 +113,6 @@ type
 		NeedsLoading: boolean;
 		IsLoaded: boolean;
 		Img: TKSImage;
-		IsMaskCreated: boolean;
 
 		Log: TKSLog;
 		TileCache: array[0..15,0..8] of TLazIntfImage;
@@ -126,7 +125,6 @@ type
 
 		procedure Load(iLevelDir: string);
 
-		procedure NeedMask();
 		function GetTile(ix,iy: integer): TLazIntfImage;
 	end;
 
@@ -521,49 +519,6 @@ end;
 
 
 
-
-//Function used to remove pink background from non-alpha png images
-procedure CreatePNGAlpha(Img: TPortableNetworkGraphic);
-var
-	x, y: integer;
-	pngal: PByteArray;
-begin
-        Exit; //*h CreatePNGAlpha commented out, not yet copatible with TPortableNetworkGraphic 
-
-        (*
-	case Img.Header.ColorType of
-		COLOR_GRAYSCALEALPHA, COLOR_RGBALPHA: ;		// nothing needed
-		COLOR_RGB, COLOR_PALETTE:
-		begin
-			Img.CreateAlpha();
-			if not(Assigned(Img.AlphaScanline[0])) then
-			begin
-				Exit;
-			end;
-			for y := 0 to Img.Height - 1 do
-			begin
-				pngal := Img.AlphaScanline[y];
-				for x := 0 to Img.Width - 1 do
-				begin
-					if (Img.Pixels[x, y] = $ff00ff) then
-					begin
-						pngal[x] := 0;
-					end
-					else
-					begin
-						pngal[x] := 255;
-					end;
-				end;
-			end;		// for y
-		end;
-	end;		// case ColorType of
-        *)
-end;
-
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TKSTileset:
 
@@ -575,7 +530,6 @@ begin
 	IsLoaded := false;
 	NeedsLoading := false;
 	Img := nil;
-	IsMaskCreated := false;
 	Clear();
 end;
 
@@ -642,48 +596,11 @@ begin
 		end;
 	end;
 	IsLoaded := True;
-	try
-		NeedMask();
-	except
-	end;
 end;
 
 
 
 
-
-procedure TKSTileset.NeedMask();
-var
-	x, y: integer;
-	pngal: PByteArray;
-begin
-        Exit; //*h NeedMask function commented out, not yet copatible with TPortableNetworkGraphic
-        (*
-        if (IsMaskCreated) then Exit;
-	if not(IsLoaded) then Exit;
-	CreatePNGAlpha(Img);
-
-	// force the zero-th tile full transparent!
-	for y := 0 to 23 do
-	begin
-		pngal := Img.AlphaScanline[y];
-		if not(Assigned(pngal)) then
-		begin
-			if Assigned(Log) then
-			begin
-				Log.Log(LOG_ERROR, 'Cannot load tileset #' + IntToStr(Self.Number) + ' because it is not a transparent-able PNG format.');
-				Exit;
-			end;
-		end;
-		for x := 0 to 23 do
-		begin
-			pngal[x] := 0;
-		end;		// for x
-	end;		// for y
-        *)
-
-	IsMaskCreated := True;
-end;
 
 function TKSTileset.GetTile(ix, iy: integer): TLazIntfImage;
 var
