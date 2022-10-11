@@ -67,12 +67,17 @@ type
 
 		function ShowModal(): integer; override;
 
+        private
+                gKSDir: string;
+
 	protected
 		Worlds: TObjectList;
 
 		function  FindWorlds(): integer;
 
 		procedure OnWorldUpdate(iWorld: TWorldDesc; iWorldName, iAuthor: string);		// TWorldParamUpdater callback
+        public
+                property KSDir: string read gKSDir write gKSDir;
 	end;
 
 
@@ -123,8 +128,8 @@ type
 
 implementation
 
-uses
-	uKSRepresentations;
+//uses
+//	uKSRepresentations;
 
 
 
@@ -146,8 +151,8 @@ begin
 	begin
 		Caption := iCaption;
 	end;
-	tlOK.Glyph.LoadFromResourceName(HInstance, 'BBOK');
-	tlCancel.Glyph.LoadFromResourceName(HInstance, 'BBCANCEL');
+	//tlOK.Glyph.LoadFromResourceName(HInstance, 'BBOK');
+	//tlCancel.Glyph.LoadFromResourceName(HInstance, 'BBCANCEL');
 end;
 
 

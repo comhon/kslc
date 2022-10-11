@@ -109,7 +109,8 @@ procedure TMultiEvent.Del(iListener: TMultiEventListener);
 var
 	i: integer;
 begin
-	for i := 0 to fNumListeners - 1 do
+        Exit;
+        for i := 0 to fNumListeners - 1 do
 	begin
 		if (@fListener[i] = @iListener) then
 		begin

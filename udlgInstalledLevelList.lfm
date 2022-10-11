@@ -1,58 +1,60 @@
 object dlgInstalledLevelList: TdlgInstalledLevelList
-  Left = 368
-  Top = 179
-  Width = 772
+  Left = 350
   Height = 536
+  Top = 146
+  Width = 772
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Installed Levels:'
+  ClientHeight = 536
+  ClientWidth = 772
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
-  Font.Style = []
   KeyPreview = True
-  Position = poDefaultPosOnly
   OnKeyPress = FormKeyPress
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
+  Position = poDefaultPosOnly
+  LCLVersion = '2.0.12.0'
   object pMain: TPanel
     Left = 0
+    Height = 511
     Top = 0
-    Width = 764
-    Height = 484
+    Width = 772
     Align = alClient
     BevelOuter = bvLowered
+    ClientHeight = 511
+    ClientWidth = 772
     TabOrder = 0
     object lWorlds: TLabel
       Left = 2
+      Height = 13
       Top = 2
       Width = 89
-      Height = 13
       Caption = 'Choose a level:'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
+      ParentColor = False
       ParentFont = False
     end
     object lvWorld: TListView
       Left = 6
+      Height = 480
       Top = 22
-      Width = 749
-      Height = 453
-      Anchors = [akLeft, akTop, akRight, akBottom]
-      Columns = <
+      Width = 757
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      Columns = <      
         item
           Caption = 'Folder'
           Width = 250
-        end
+        end      
         item
           Caption = 'Level Name'
           Width = 150
-        end
+        end      
         item
           Caption = 'Author'
           Width = 150
@@ -67,26 +69,28 @@ object dlgInstalledLevelList: TdlgInstalledLevelList
   end
   object pTl: TPanel
     Left = 0
-    Top = 484
-    Width = 764
     Height = 25
+    Top = 511
+    Width = 772
     Align = alBottom
     BevelOuter = bvLowered
+    ClientHeight = 25
+    ClientWidth = 772
     TabOrder = 1
     object tlOK: TSpeedButton
-      Left = 0
-      Top = 0
-      Width = 344
+      Left = 1
       Height = 23
+      Top = 1
+      Width = 344
       Align = alLeft
       Caption = '&OK'
       OnClick = tlOKClick
     end
     object tlCancel: TSpeedButton
-      Left = 343
-      Top = 0
-      Width = 418
+      Left = 345
       Height = 23
+      Top = 1
+      Width = 426
       Align = alClient
       Caption = '&Cancel'
       OnClick = tlCancelClick

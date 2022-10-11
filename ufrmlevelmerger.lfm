@@ -1,0 +1,142 @@
+object Form1: TForm1
+  Left = 199
+  Height = 709
+  Top = 73
+  Width = 1101
+  Caption = 'Form1'
+  ClientHeight = 709
+  ClientWidth = 1101
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '2.0.12.0'
+  object edLevel1Path: TEdit
+    Left = 91
+    Height = 23
+    Top = 48
+    Width = 480
+    TabOrder = 0
+  end
+  object btnSelLevel1Path: TButton
+    Left = 8
+    Height = 25
+    Top = 46
+    Width = 75
+    Caption = 'Select Level1'
+    OnClick = btnSelLevel1PathClick
+    TabOrder = 1
+  end
+  object edLevel2Path: TEdit
+    Left = 91
+    Height = 23
+    Top = 80
+    Width = 480
+    TabOrder = 2
+  end
+  object btnSelLevel2Path: TButton
+    Left = 8
+    Height = 25
+    Top = 78
+    Width = 75
+    Caption = 'Select Level2'
+    OnClick = btnSelLevel2PathClick
+    TabOrder = 3
+  end
+  object edKSPath: TEdit
+    Left = 91
+    Height = 23
+    Top = 10
+    Width = 480
+    OnChange = edKSPathChange
+    TabOrder = 4
+    Text = 'D:\Games\PortableApps\KnyttStories\'
+  end
+  object btnSelKSDir: TButton
+    Left = 8
+    Height = 25
+    Top = 10
+    Width = 75
+    Caption = 'Select KSDir'
+    OnClick = btnSelKSDirClick
+    TabOrder = 5
+  end
+  object rv1: TKSRoomView
+    Left = 8
+    Height = 290
+    Top = 112
+    Width = 650
+    ShowNeighbors = True
+    BackgroundVisible = True
+  end
+  object rv2: TKSRoomView
+    Left = 8
+    Height = 290
+    Top = 408
+    Width = 650
+    ShowNeighbors = True
+    BackgroundVisible = True
+  end
+  object btnOpenLevel1: TButton
+    Left = 576
+    Height = 25
+    Top = 46
+    Width = 75
+    Caption = 'Open'
+    OnClick = btnOpenLevel1Click
+    TabOrder = 6
+  end
+  object btnOpenLevel2: TButton
+    Left = 576
+    Height = 25
+    Top = 78
+    Width = 75
+    Caption = 'Open'
+    OnClick = btnOpenLevel2Click
+    TabOrder = 7
+  end
+  object mLog: TMemo
+    Left = 816
+    Height = 488
+    Top = 112
+    Width = 272
+    Font.CharSet = EASTEUROPE_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Segoe UI'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentFont = False
+    TabOrder = 8
+  end
+  object mvLevel1: TKSMapView
+    Left = 664
+    Height = 240
+    Top = 112
+    Width = 144
+    MapStyle = msOriginal
+    HighlightCenter = True
+    AllowMultiSelect = True
+    OnGoToRoom = mvLevel1GoToRoom
+    OnMouseUp = mvLevel1MouseUp
+  end
+  object btnDupl: TButton
+    Left = 664
+    Height = 25
+    Top = 368
+    Width = 75
+    Caption = 'btnDupl'
+    OnClick = btnDuplClick
+    TabOrder = 9
+  end
+  object mvLevel2: TKSMapView
+    Left = 672
+    Height = 240
+    Top = 416
+    Width = 144
+    MapStyle = msOriginal
+    HighlightCenter = True
+    AllowMultiSelect = True
+    OnGoToRoom = mvLevel2GoToRoom
+    OnRoomSelectionChanged = mvLevel2RoomSelectionChanged
+    OnMouseUp = mvLevel2MouseUp
+  end
+end

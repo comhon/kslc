@@ -18,14 +18,18 @@ uses
 	StdCtrls,
 	uKSRepresentations,
 	uRoomDuplicator,
-	uKSMapView;
+	uKSMapView, uKSRoomView, udlgRoomView;
 
 
 
 
 
 type
-	TdlgDuplicateRooms = class(TForm)
+
+        { TdlgDuplicateRooms }
+
+ TdlgDuplicateRooms = class(TForm)
+          cbPreview: TCheckBox;
     pTl: TPanel;
     tlOK: TSpeedButton;
     tlCancel: TSpeedButton;
@@ -47,7 +51,9 @@ type
     chbModAbsOutShifts: TCheckBox;
     chbModOutWarps: TCheckBox;
 
-		procedure FormCreate(Sender: TObject);
+                procedure chbUseSelectionChange(Sender: TObject);
+                procedure cbPreviewChange(Sender: TObject);
+  procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure tlCancelClick(Sender: TObject);
@@ -59,14 +65,19 @@ type
 		Duplicator: TRoomDuplicator;
 		UpdatingProps: boolean;
 		Settings: TRoomDuplicatorSettings;
-		
+
+                fDlgPreview: TdlgRoomView;
+                procedure MapRoomMouseUp(Sender: TObject; Button: TMouseButton;
+                  Shift: TShiftState; X, Y: Integer);
 	public
 		MapView: TKSMapView;
+                MapView2: TKSMapView;
 		Level: TKSLevel;
+                Target: TKSLevel;
 
 		OffsetX, OffsetY: integer;
 
-		constructor Create(AOwner: TComponent; iLevel: TKSLevel); reintroduce;
+		constructor Create(AOwner: TComponent; iLevel: TKSLevel; iTarget: TKSLevel = nil); reintroduce;
 		destructor Destroy(); override;
 	end;
 
@@ -89,8 +100,8 @@ type
 
 implementation
 
-uses
-	ufrmMain;
+//uses
+//	ufrmMain;
 
 
 
@@ -102,25 +113,45 @@ uses
 
 
 
-constructor TdlgDuplicateRooms.Create(AOwner: TComponent; iLevel: TKSLevel);
+constructor TdlgDuplicateRooms.Create(AOwner: TComponent; iLevel: TKSLevel; iTarget: TKSLevel = nil);
 begin
 	inherited Create(AOwner);
 	Settings := TRoomDuplicatorSettings.Create();
 	Level := iLevel;
+        Target:= iTarget;
+        if Target<>nil then
+        begin
+          Width:=Width*2;
+        end;
+
 	MapView := TKSMapView.Create(Self);
 	MapView.Level := Level;
 	MapView.Align := alClient;
-	MapView.GoToCoord(frmMain.CurrentXPos, frmMain.CurrentYPos);
 	MapView.Parent := pMap;
-	MapView.Align := alClient;
 	MapView.HighlightCenter := false;
 	MapView.OnRoomSelectionChanged := MapRoomSelectionChanged;
+        MapView.OnMouseUp := MapRoomMouseUp;
+
+      if Target<>nil then
+      begin
+        MapView2 := TKSMapView.Create(Self);
+        MapView2.Width:=Width div 2;
+	MapView2.Level := Target;
+	MapView2.Align := alRight;
+	MapView2.Parent := pMap;
+	MapView2.HighlightCenter := false;
+	MapView2.OnRoomSelectionChanged := MapRoomSelectionChanged;
+        MapView2.XPos:=1000;
+        MapView2.YPos:=1000;
+      end;
+
 	chbModRelContainedShifts.Checked := Settings.ModifyRelativeContainedShifts;
 	chbModAbsContainedShifts.Checked := Settings.ModifyAbsoluteContainedShifts;
 	chbModContainedWarps.Checked     := Settings.ModifyContainedWarps;
 	chbModRelOutShifts.Checked       := Settings.ModifyRelativeOutgoingShifts;
 	chbModAbsOutShifts.Checked       := Settings.ModifyAbsoluteOutgoingShifts;
 	chbModOutWarps.Checked           := Settings.ModifyContainedWarps;
+
 end;
 
 
@@ -138,8 +169,20 @@ end;
 
 procedure TdlgDuplicateRooms.FormCreate(Sender: TObject);
 begin
-	tlOK.Glyph.LoadFromResourceName(HInstance, 'BBOK');
-	tlCancel.Glyph.LoadFromResourceName(HInstance, 'BBCANCEL');
+//	tlOK.Glyph.LoadFromResourceName(HInstance, 'BBOK');
+//	tlCancel.Glyph.LoadFromResourceName(HInstance, 'BBCANCEL');
+      fDlgPreview:=TDlgRoomView.Create(Application);
+end;
+
+procedure TdlgDuplicateRooms.chbUseSelectionChange(Sender: TObject);
+begin
+  MapRoomSelectionChanged(Sender);
+end;
+
+procedure TdlgDuplicateRooms.cbPreviewChange(Sender: TObject);
+begin
+  fdlgPreview.Visible:=cbPreview.Checked;
+  MapView.HighlightCenter := cbPreview.Checked;
 end;
 
 
@@ -150,7 +193,16 @@ procedure TdlgDuplicateRooms.FormShow(Sender: TObject);
 var
 	x, y: integer;
 begin
-	Duplicator := TRoomDuplicator.Create(Level, MapView.Selection, (MapView.Selection.Count > 0));
+        if Target <> nil then
+        begin
+             Duplicator := TRoomDuplicator.Create(Level, Target, MapView.Selection, (MapView.Selection.Count > 0));
+        end
+        else
+        begin
+             Duplicator := TRoomDuplicator.Create(Level, MapView.Selection, (MapView.Selection.Count > 0));
+        end;
+
+
 	Duplicator.Guess(x, y);
 	UpdatingProps := true;
 	eOffsetX.Text := IntToStr(x);
@@ -168,6 +220,7 @@ begin
 	Action := caHide;
 	Duplicator.Free();
 	Duplicator := nil;
+        fDlgPreview.Free;
 end;
 
 
@@ -186,12 +239,14 @@ end;
 procedure TdlgDuplicateRooms.tlOKClick(Sender: TObject);
 begin
 	ModalResult := mrOK;
+
 	Settings.ModifyAbsoluteContainedShifts := chbModAbsContainedShifts.Checked;
 	Settings.ModifyAbsoluteOutgoingShifts  := chbModAbsOutShifts.Checked;
 	Settings.ModifyContainedWarps          := chbModContainedWarps.Checked;
 	Settings.ModifyRelativeContainedShifts := chbModRelContainedShifts.Checked;
 	Settings.ModifyRelativeOutgoingShifts  := chbModRelOutShifts.Checked;
 	Settings.ModifyOutgoingWarps           := chbModOutWarps.Checked;
+
 	Duplicator.Duplicate(OffsetX, OffsetY, Settings);
 end;
 
@@ -215,7 +270,8 @@ begin
 		OffsetY := Decoded;
 	end;
 	Duplicator.SelectionOnly := chbUseSelection.Checked;
-	lCollisionWarning.Visible := not(Duplicator.Check(OffsetX, OffsetY));
+
+        MapRoomSelectionChanged(Sender);
 end;
 
 
@@ -223,10 +279,78 @@ end;
 
 
 procedure TdlgDuplicateRooms.MapRoomSelectionChanged(Sender: TObject);
+var
+   i: integer;
+   aSelMapView: TKSMapView;
+   r: TKSRoom;
 begin
-	lCollisionWarning.Visible := not(Duplicator.Check(OffsetX, OffsetY));
+        lCollisionWarning.Visible := not(Duplicator.Check(OffsetX, OffsetY));
+
+   if Target <> nil then
+   begin
+        aSelMapView:=MapView2;
+   end
+   else
+   begin
+        aSelMapView:=MapView;
+   end;
+
+        aSelMapView.Addition.Clear();
+
+        if Duplicator.SelectionOnly then
+        begin
+          for i:=0 to MapView.Selection.Count-1 do
+          begin
+            aSelMapView.Addition.Add(MapView.Selection[i]);
+          end;
+        end
+        else
+        begin
+          for i:=0 to Level.NumRooms-1 do
+          begin
+            aSelMapView.Addition.Add(Level.Room[i]);
+          end;
+        end;
+
+        aSelMapView.AdditionOffsetX:=OffsetX;
+        aSelMapView.AdditionOffsetY:=OffsetY;
+
+        r:=Level.GetRoom(MapView.XPos, MapView.YPos);
+        if r<>nil then
+        begin
+             fDlgPreview.rv1.Room:=r;
+        end;
+
+        Invalidate;
+
 end;
 
+procedure TdlgDuplicateRooms.MapRoomMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+   r: TKSRoom;
+   i: integer;
+begin
+        r:=Level.GetRoom(MapView.XPos, MapView.YPos);
+
+        for i:=0 to (MapView.Addition.Count)-1 do
+        begin
+          if (TKSRoom(MapView.Addition[i]).XPos+MapView.AdditionOffsetX = MapView.XPos) and
+             (TKSRoom(MapView.Addition[i]).YPos+MapView.AdditionOffsetY = MapView.YPos) then
+          begin
+            r:=MapView.Addition[i];
+            break;
+          end;
+
+        end;
+
+
+        if r<>nil then
+        begin
+             fDlgPreview.rv1.Room:=r;
+        end;
+        Invalidate;
+end;
 
 
 

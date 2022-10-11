@@ -30,13 +30,19 @@ type
 		function ShouldModifyWarp(iIsContained: boolean): boolean;
 	end;
 
-	TRoomDuplicator = class
-	public
-		Level: TKSLevel;
+        { TRoomDuplicator }
+
+ TRoomDuplicator = class
+ private
+   procedure GetRanges(ALevel: TKSLevel; out AMaxY: integer; out AMinY: integer);
+ public
+		Source: TKSLevel;
+                Target: TKSLevel;
 		Selection: TList;
 		SelectionOnly: boolean;
 
-		constructor Create(iLevel: TKSLevel; iSelection: TList; iSelectionOnly: boolean);
+		constructor Create(iLevel: TKSLevel; iSelection: TList; iSelectionOnly: boolean); overload;
+		constructor Create(iSourceLevel: TKSLevel; iTargetLevel: TKSLevel; iSelection: TList; iSelectionOnly: boolean); overload;
 
 		procedure Duplicate(iOffsetX, iOffsetY: integer; iSettings: TRoomDuplicatorSettings);		// copies the level, room by room
 		function  Check    (iOffsetX, iOffsetY: integer): boolean;		// returns true if offset is ok for copying
@@ -147,7 +153,18 @@ end;
 constructor TRoomDuplicator.Create(iLevel: TKSLevel; iSelection: TList; iSelectionOnly: boolean);
 begin
 	inherited Create();
-	Level := iLevel;
+	Source := iLevel;
+        Target := iLevel;
+	Selection := iSelection;
+	SelectionOnly := iSelectionOnly;
+end;
+
+constructor TRoomDuplicator.Create(iSourceLevel: TKSLevel;
+  iTargetLevel: TKSLevel; iSelection: TList; iSelectionOnly: boolean);
+begin
+	inherited Create();
+	Source := iSourceLevel;
+        Target := iTargetLevel;
 	Selection := iSelection;
 	SelectionOnly := iSelectionOnly;
 end;
@@ -159,31 +176,31 @@ end;
 procedure TRoomDuplicator.Duplicate(iOffsetX, iOffsetY: integer; iSettings: TRoomDuplicatorSettings);
 var
 	i: integer;
-	r: TKSRoom;
+	rs,rt: TKSRoom;
 begin
 	if (SelectionOnly) then
 	begin
 		for i := 0 to Selection.Count - 1 do
 		begin
-			r := TKSRoom(Selection[i]);
-			r := Level.AddRoom(r.XPos + iOffsetX, r.YPos + iOffsetY, @r.Data);
-			r.CopyEventParamsFrom(TKSRoom(Selection[i]));
-			r.UpdateFromData();
-			ApplySettings(r, TKSRoom(Selection[i]), iSettings);
+			rs := TKSRoom(Selection[i]);
+			rt := Target.AddRoom(rs.XPos + iOffsetX, rs.YPos + iOffsetY, @rs.Data);
+			rt.CopyEventParamsFrom(rs);
+			rt.UpdateFromData();
+			ApplySettings(rt, rs, iSettings);
 		end;		// for i
 	end
 	else
 	begin
-		for i := 0 to Level.NumRooms - 1 do
+		for i := 0 to Source.NumRooms - 1 do
 		begin
-			r := Level.Room[i];
-			r := Level.AddRoom(r.XPos + iOffsetX, r.YPos + iOffsetY, @r.Data);
-			r.CopyEventParamsFrom(Level.Room[i]);
-			r.UpdateFromData();
-			ApplySettings(r, Level.Room[i], iSettings);
+			rs := Source.Room[i];
+			rt := Target.AddRoom(rs.XPos + iOffsetX, rs.YPos + iOffsetY, @rs.Data);
+			rt.CopyEventParamsFrom(rs);
+			rt.UpdateFromData();
+			ApplySettings(rt, rs, iSettings);
 		end;		// for i
 	end;
-	Level.Changed();
+	Target.Changed();
 end;
 
 
@@ -194,18 +211,18 @@ function TRoomDuplicator.Check(iOffsetX, iOffsetY: integer): boolean;
 var
 	i, j: integer;
 	xp, yp: integer;
-	r: TKSRoom;
+	rs: TKSRoom;
 begin
 	if (SelectionOnly) then
 	begin
 		for i := 0 to Selection.Count - 1 do
 		begin
-			r := TKSRoom(Selection[i]);
-			xp := r.XPos + iOffsetX;
-			yp := r.YPos + iOffsetY;
-			for j := 0 to Level.NumRooms - 1 do
+			rs := TKSRoom(Selection[i]);
+			xp := rs.XPos + iOffsetX;
+			yp := rs.YPos + iOffsetY;
+			for j := 0 to Target.NumRooms - 1 do
 			begin
-				if ((xp = Level.Room[j].XPos) and (yp = Level.Room[j].YPos)) then
+				if ((xp = Target.Room[j].XPos) and (yp = Target.Room[j].YPos)) then
 				begin
 					Result := false;
 					Exit;
@@ -215,14 +232,14 @@ begin
 	end
 	else
 	begin
-		for i := 0 to Level.NumRooms - 1 do
+		for i := 0 to Source.NumRooms - 1 do
 		begin
-			r := TKSRoom(Level.Room[i]);
-			xp := r.XPos + iOffsetX;
-			yp := r.YPos + iOffsetY;
-			for j := 0 to Level.NumRooms - 1 do
+			rs := TKSRoom(Source.Room[i]);
+			xp := rs.XPos + iOffsetX;
+			yp := rs.YPos + iOffsetY;
+			for j := 0 to Target.NumRooms - 1 do
 			begin
-				if ((xp = Level.Room[j].XPos) and (yp = Level.Room[j].YPos)) then
+				if ((xp = Target.Room[j].XPos) and (yp = Target.Room[j].YPos)) then
 				begin
 					Result := false;
 					Exit;
@@ -234,29 +251,72 @@ begin
 end;
 
 
-
-
+procedure TRoomDuplicator.GetRanges(ALevel: TKSLevel; out AMaxY: integer; out AMinY: integer);
+var
+        i: integer;
+begin
+        AMaxY := ALevel.Room[0].YPos;
+	AMinY := AMaxY;
+	for i := 0 to ALevel.NumRooms - 1 do
+	begin
+		if (ALevel.Room[i].YPos < AMinY) then AMinY := ALevel.Room[i].YPos;
+		if (ALevel.Room[i].YPos > AMaxY) then AMaxY := ALevel.Room[i].YPos;
+	end;
+end;
 
 procedure TRoomDuplicator.Guess(var oOffsetX, oOffsetY: integer);
 var
 	i: integer;
-	mxy, mny: integer;
+	tgMaxY, tgMinY: integer;
+        scMaxY, scMinY: integer;
+        mapOffsetY: integer;
+        tgMapHeight: integer;
 begin
-	if (Level.NumRooms <= 0) then
+	if (Target.NumRooms <= 0) then
 	begin
 		oOffsetX := 0;
 		oOffsetY := 0;
 		Exit;
 	end;
-	mxy := Level.Room[0].YPos;
-	mny := mxy;
-	for i := 0 to Level.NumRooms - 1 do
+
+        GetRanges(Source,scMaxY,scMinY);
+        (*
+        scMaxY := Source.Room[0].YPos;
+	scMinY := scMaxY;
+	for i := 0 to Source.NumRooms - 1 do
 	begin
-		if (Level.Room[i].YPos < mny) then mny := Level.Room[i].YPos;
-		if (Level.Room[i].YPos > mxy) then mxy := Level.Room[i].YPos;
+		if (Source.Room[i].YPos < scMinY) then scMinY := Source.Room[i].YPos;
+		if (Source.Room[i].YPos > scMaxY) then scMaxY := Source.Room[i].YPos;
 	end;
-	oOffsetX := 0;
-	oOffsetY := mxy - mny + 1;
+        *)
+
+        if Target <> Source then
+        begin
+          GetRanges(Target,tgMaxY,tgMinY);
+          (*
+          tgMaxY := Target.Room[0].YPos;
+	  tgMinY := tgMaxY;
+	  for i := 0 to Target.NumRooms - 1 do
+	  begin
+		  if (Target.Room[i].YPos < tgMinY) then tgMinY := Target.Room[i].YPos;
+		  if (Target.Room[i].YPos > tgMaxY) then tgMaxY := Target.Room[i].YPos;
+	  end;
+          *)
+        end
+        else
+        begin
+                tgMaxY:=scMaxY;
+                tgMinY:=scMinY;
+        end;
+
+
+
+        mapOffsetY := tgMinY-scMinY;
+
+        tgMapHeight := tgMaxY-tgMinY;
+
+        oOffsetX := 0;
+        oOffsetY := mapOffsetY+tgMapHeight+1;
 end;
 
 

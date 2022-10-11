@@ -6,7 +6,8 @@ unit uKSMapView;
 interface
 
 uses
-	Classes,
+        SysUtils,
+        Classes,
 	Graphics,
 	Controls,
 	Types,
@@ -21,12 +22,15 @@ type
 	TMapStyle = (msOriginal, msRendered);
 	TGoToXYEvent = procedure(Sender: TObject; iX, iY: integer) of object;
 
-	TKSMapView = class(TGraphicControl)
-	protected
+        { TKSMapView }
+
+ TKSMapView = class(TGraphicControl)
+ protected
 		fLevel: TKSLevel;
 		fMapStyle: TMapStyle;
 		fXPos, fYPos: integer;
 		fSelection: TList;
+                fAddition: TList;
 		fHighlightCenter: boolean;
 		fAllowMultiSelect: boolean;
 		
@@ -36,6 +40,9 @@ type
 		EndX, EndY: integer;
 		IsMouseDown: boolean;
 		SelectionRect: TVGRect;
+
+                fAdditionOffsetX: integer;
+                fAdditionOffsetY: integer;
 
 		NumVectors: integer;
 		Vector: array of TVGObject;
@@ -74,6 +81,7 @@ type
 		procedure GoToCoord(iXPos, iYPos: integer);
 
 		procedure CopySelection(iSrc: TList);
+                procedure ClearSelection();
 
 		function CanvasXToRoomX(x: integer): integer;
 		function CanvasYToRoomY(y: integer): integer;
@@ -82,6 +90,9 @@ type
 
 		property Level: TKSLevel read fLevel write fSetLevel stored false;
 		property Selection: TList read fSelection write fSetSelection stored false;
+                property Addition: TList read fAddition stored false;
+                property AdditionOffsetX: integer read fAdditionOffsetX write fAdditionOffsetX;
+                property AdditionOffsetY: integer read fAdditionOffsetY write fAdditionOffsetY;
 		property XPos: integer read FXPos write fSetXPos;
 		property YPos: integer read FYPos write fSetYPos;
 
@@ -154,8 +165,9 @@ begin
 	FHighlightCenter := true;
 	FAllowMultiSelect := true;
 	NumVectors := 0;
-	Selection := TList.Create();
+	fSelection := TList.Create();
 	SelectionRect := TVGRect.Create(0, 0, 0, 0, $7fff00);
+        fAddition := TList.Create();
     SelectionRect.Visible:=false;
     RegVector(SelectionRect);
 end;
@@ -166,8 +178,12 @@ end;
 
 destructor TKSMapView.Destroy();
 begin
-	Selection.Free();
-	Selection := nil;
+	fSelection.Free();
+	fSelection := nil;
+
+        fAddition.Free();
+        fAddition:=nil;
+
 	// do NOT destroy individual vectors, they are owned by clients
 	SetLength(Vector, 0);
 	inherited Destroy();
@@ -270,8 +286,11 @@ var
 	Wid, Hei: integer;
 	HalfWid, HalfHei: integer;
 	i: integer;
+        oStr: string;
+        oList: TStringList;
 begin
-	if not(Assigned(fLevel)) then Exit;
+        oList:=TStringList.Create();
+        if not(Assigned(fLevel)) then Exit;
 	Wid := Self.Width;
 	Hei := Self.Height;
 	HalfWid := Wid div 2;
@@ -320,6 +339,10 @@ begin
 			r.Left := x + 1;
 			r.Bottom := y + 8;
 			r.Right := x + 8;
+
+                        oStr:='x'+IntToStr(x)+'y'+IntToStr(y);
+                        oList.Add(oStr);
+
 			bmp.Canvas.FillRect(r);
 			(*
 			bmp.Canvas.MoveTo(x, y + 8);
@@ -333,16 +356,43 @@ begin
 			bmp.Canvas.Brush.Color := $00ffff;
 			for i := 0 to Selection.Count - 1 do
 			begin
-				x := (TKSRoom(Selection[i]).XPos - FXPos) * 8 + HalfWid;
+                                x := (TKSRoom(Selection[i]).XPos - FXPos) * 8 + HalfWid;
 				y := (TKSRoom(Selection[i]).YPos - FYPos) * 8 + HalfHei;
 				if (x <= -8) then continue;
 				if (y <= -8) then continue;
 				if (x > Wid) then continue;
 				if (y > Hei) then continue;
+
 				r.Top := y + 1;
 				r.Left := x + 1;
 				r.Bottom := y + 8;
 				r.Right := x + 8;
+				bmp.Canvas.FillRect(r);
+			end;
+		end;
+
+                if (FAllowMultiSelect and Assigned(Addition)) then
+		begin
+
+			for i := 0 to Addition.Count - 1 do
+			begin
+                                bmp.Canvas.Brush.Color := $00FF00;
+                                x := (TKSRoom(Addition[i]).XPos + AdditionOffsetX - FXPos) * 8 + HalfWid;
+				y := (TKSRoom(Addition[i]).YPos + AdditionOffsetY - FYPos) * 8 + HalfHei;
+				if (x <= -8) then continue;
+				if (y <= -8) then continue;
+				if (x > Wid) then continue;
+				if (y > Hei) then continue;
+                                oStr:='x'+IntToStr(x)+'y'+IntToStr(y);
+                                if oList.IndexOf(oStr)<>-1 then
+                                begin
+                                     bmp.Canvas.Brush.Color := $0000FF;
+                                end;
+                                r.Top := y + 1;
+				r.Left := x + 1;
+				r.Bottom := y + 8;
+				r.Right := x + 8;
+
 				bmp.Canvas.FillRect(r);
 			end;
 		end;
@@ -367,6 +417,7 @@ begin
 		Self.Canvas.Draw(0, 0, bmp);
 	finally
 		bmp.Free();
+                oList.Free();
 	end;
 end;
 
@@ -430,6 +481,13 @@ begin
 	Selection.Assign(iSrc);
 	RoomSelectionChanged();
 	Invalidate();
+end;
+
+procedure TKSMapView.ClearSelection();
+begin
+  Selection.Clear;
+  RoomSelectionChanged();
+  Invalidate();
 end;
 
 

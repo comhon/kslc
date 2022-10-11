@@ -1,0 +1,21 @@
+object dlgRoomView: TdlgRoomView
+  Left = 344
+  Height = 300
+  Top = 159
+  Width = 657
+  BorderStyle = bsToolWindow
+  Caption = 'RoomView'
+  ClientHeight = 300
+  ClientWidth = 657
+  OnClose = FormClose
+  OnCreate = FormCreate
+  LCLVersion = '2.0.12.0'
+  object rv1: TKSRoomView
+    Left = 0
+    Height = 290
+    Top = 0
+    Width = 650
+    ShowNeighbors = True
+    BackgroundVisible = True
+  end
+end
