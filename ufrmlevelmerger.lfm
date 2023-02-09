@@ -1,10 +1,10 @@
 object Form1: TForm1
-  Left = 199
-  Height = 709
-  Top = 73
+  Left = 207
+  Height = 786
+  Top = 33
   Width = 1101
   Caption = 'Form1'
-  ClientHeight = 709
+  ClientHeight = 786
   ClientWidth = 1101
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -94,10 +94,10 @@ object Form1: TForm1
     TabOrder = 7
   end
   object mLog: TMemo
-    Left = 816
-    Height = 488
-    Top = 112
-    Width = 272
+    Left = 8
+    Height = 77
+    Top = 704
+    Width = 1087
     Font.CharSet = EASTEUROPE_CHARSET
     Font.Color = clBlack
     Font.Height = -11
@@ -105,6 +105,7 @@ object Form1: TForm1
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     ParentFont = False
+    ScrollBars = ssAutoVertical
     TabOrder = 8
   end
   object mvLevel1: TKSMapView
@@ -138,5 +139,34 @@ object Form1: TForm1
     OnGoToRoom = mvLevel2GoToRoom
     OnRoomSelectionChanged = mvLevel2RoomSelectionChanged
     OnMouseUp = mvLevel2MouseUp
+  end
+  object pProgress: TPanel
+    Left = 664
+    Height = 55
+    Top = 48
+    Width = 424
+    Anchors = [akTop, akLeft, akRight]
+    BevelInner = bvLowered
+    ClientHeight = 55
+    ClientWidth = 424
+    TabOrder = 10
+    Visible = False
+    object lProgress: TLabel
+      Left = 4
+      Height = 33
+      Top = 2
+      Width = 416
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
+      ParentColor = False
+      WordWrap = True
+    end
+    object pbMain: TProgressBar
+      Left = 2
+      Height = 15
+      Top = 37
+      Width = 420
+      TabOrder = 0
+    end
   end
 end

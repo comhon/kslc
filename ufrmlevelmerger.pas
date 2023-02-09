@@ -5,8 +5,9 @@ unit ufrmLevelMerger;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, uKSRoomView,
-  uKSMapView, uKSLog, udlgInstalledLevelList, uKSRepresentations, udlgDuplicateRooms;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
+  ComCtrls, uKSRoomView, uKSMapView, uKSLog, udlgInstalledLevelList,
+  uKSRepresentations, udlgDuplicateRooms;
 
 type
 
@@ -26,8 +27,11 @@ type
     edLevel1Path: TEdit;
     edLevel2Path: TEdit;
     edKSPath: TEdit;
+    lProgress: TLabel;
     mvLevel1: TKSMapView;
     mvLevel2: TKSMapView;
+    pbMain: TProgressBar;
+    pProgress: TPanel;
     rv1: TKSRoomView;
     rv2: TKSRoomView;
     mLog: TMemo;
@@ -53,6 +57,10 @@ type
     fLevels: TKSLevels;
     fMapViews: TKSMapViews;
     fRoomViews: TKSRoomViews;
+    procedure FinitProgress();
+    procedure InitProgress(iMsg: string);
+    procedure OnLoadProgress(Sender: TObject; iCurrent, iMax: integer;
+      iMessage: string);
     procedure OnLogUpdate(Sender: TObject);
     function SelectLevel(out ALevelPath: string): boolean;
     function OpenLevel(ALevelNo: integer; ALevelFile: string): boolean;
@@ -70,6 +78,30 @@ implementation
 
 { TForm1 }
 
+procedure TForm1.InitProgress(iMsg: string);
+begin
+	pbMain.Position := 0;
+	lProgress.Caption := iMsg;
+	pProgress.Visible := True;
+	Screen.Cursor := crHourGlass;
+end;
+
+procedure TForm1.FinitProgress();
+begin
+	Screen.Cursor := crDefault;
+	pProgress.Visible := False;
+end;
+
+procedure TForm1.OnLoadProgress(Sender: TObject; iCurrent, iMax: integer; iMessage: string);
+begin
+	pbMain.Max := iMax;
+	pbMain.Position := iCurrent;
+	lProgress.Caption := 'Loading level...'#13#10 + iMessage;
+	pbMain.Update();
+	lProgress.Update();
+        mLog.Update();
+end;
+
 procedure TForm1.btnSelKSDirClick(Sender: TObject);
 var
   dlgOpen: TOpenDialog;
@@ -78,7 +110,7 @@ begin
   try
     dlgOpen.InitialDir := '.';
     dlgOpen.Title := 'Where is your Knytt Stories exe:';
-    dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories.exe';
+    dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories*.exe';
     if (dlgOpen.Execute()) then
     begin
       fKSDir := IncludeTrailingPathDelimiter(ExtractFilePath(dlgOpen.Filename));
@@ -246,20 +278,20 @@ end;
 
 function TForm1.OpenLevel(ALevelNo: integer; ALevelFile: string): boolean;
 var
-  lvl: TKSLevel;
   aLevel: TKSLevel;
 begin
   uKSRepresentations.gKSDir:=fKSDir;
   aLevel := TKSLevel.Create(gLog);
-  //InitProgress('Loading level...');
-  //lvl.OnProgress := OnLoadProgress;
+  InitProgress('Loading level...');
+  aLevel.OnProgress := @OnLoadProgress;
   try
     aLevel.LoadFromFile(ALevelFile);
   except
     aLevel.Free();
-    //  FinitProgress();
+    FinitProgress();
     Exit;
   end;
+  FinitProgress();
   if Assigned(fLevels[ALevelNo]) then
   begin
        fLevels[ALevelNo].Free;
