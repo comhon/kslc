@@ -195,7 +195,9 @@ begin
 		try
 			dlgOpen.InitialDir := '.';
 			dlgOpen.Title := 'Where is your Knytt Stories exe:';
-			//dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories.exe';
+			{$IFDEF WINDOWS}
+			dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories.exe';
+			{$ENDIF}
 			if (dlgOpen.Execute()) then
 			begin
 				gKSDir := IncludeTrailingPathDelimiter(ExtractFilePath(dlgOpen.Filename));
@@ -218,6 +220,7 @@ begin
 
 	// open initial level
 	dlg := TdlgInstalledLevelList.Create(nil);
+	dlg.KSDir := gKSDir;
 	try
 		dlg.Caption := 'Open level:';
 		case dlg.ShowModal() of

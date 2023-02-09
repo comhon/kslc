@@ -1221,6 +1221,7 @@ var
 	dlg: TdlgInstalledLevelList;
 begin
 	dlg := TdlgInstalledLevelList.Create(nil);
+	dlg.KSDir := gKSDir;
 	try
 		case dlg.ShowModal() of
 			mrKSDirNotFound:

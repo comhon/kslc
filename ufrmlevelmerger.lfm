@@ -48,7 +48,7 @@ object Form1: TForm1
     Width = 480
     OnChange = edKSPathChange
     TabOrder = 4
-    Text = 'D:\Games\PortableApps\KnyttStories\'
+    Text = 'C:\Games\Knytt Stories\'
   end
   object btnSelKSDir: TButton
     Left = 8
