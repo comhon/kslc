@@ -8,6 +8,7 @@ object Form1: TForm1
   ClientWidth = 1101
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   LCLVersion = '2.0.12.0'
   object edLevel1Path: TEdit
     Left = 91
@@ -168,5 +169,13 @@ object Form1: TForm1
       Width = 420
       TabOrder = 0
     end
+  end
+  object btnText: TButton
+    Left = 808
+    Height = 25
+    Top = 112
+    Width = 75
+    OnClick = btnTextClick
+    TabOrder = 11
   end
 end

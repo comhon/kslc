@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
   ComCtrls, uKSRoomView, uKSMapView, uKSLog, udlgInstalledLevelList,
-  uKSRepresentations, udlgDuplicateRooms;
+  uKSRepresentations, udlgDuplicateRooms, IniFiles;
 
 type
 
@@ -24,6 +24,7 @@ type
     btnSelKSDir: TButton;
     btnOpenLevel1: TButton;
     btnDupl: TButton;
+    btnText: TButton;
     edLevel1Path: TEdit;
     edLevel2Path: TEdit;
     edKSPath: TEdit;
@@ -41,9 +42,11 @@ type
     procedure btnSelKSDirClick(Sender: TObject);
     procedure btnSelLevel1PathClick(Sender: TObject);
     procedure btnSelLevel2PathClick(Sender: TObject);
+    procedure btnTextClick(Sender: TObject);
     procedure edKSPathChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure mvLevel1GoToRoom(Sender: TObject; iX, iY: integer);
     procedure mvLevel1MouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -105,16 +108,20 @@ end;
 procedure TForm1.btnSelKSDirClick(Sender: TObject);
 var
   dlgOpen: TOpenDialog;
+  aIni: TIniFile;
 begin
   dlgOpen := TOpenDialog.Create(Self);
   try
-    dlgOpen.InitialDir := '.';
+    dlgOpen.InitialDir := edKSPath.Text;
     dlgOpen.Title := 'Where is your Knytt Stories exe:';
     dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories*.exe';
     if (dlgOpen.Execute()) then
     begin
       fKSDir := IncludeTrailingPathDelimiter(ExtractFilePath(dlgOpen.Filename));
       gLog.Log(LOG_INFO, 'Knytt Stories directory set to "' + fKSDir + '"');
+      aIni:=TIniFile.Create(IncludeTrailingPathDelimiter(ExtractFileDir(Application.ExeName))+'Settings.ini');
+      aIni.WriteString('Main','KSDir',fKSDir);
+      aIni.Free;
     end
     else
     begin
@@ -173,6 +180,56 @@ begin
   end;
 end;
 
+procedure TForm1.btnTextClick(Sender: TObject);
+var
+  room: TKSRoom;
+  i,j,k: integer;
+  aStr: string;
+  aList: TStringList;
+begin
+  room:=fRoomViews[1].Room;
+
+  aList:=TStringList.Create;
+  for k := 0 to 3 do
+  begin
+    aList.Add('Layer '+k.ToString);
+    for i := 0 to 9 do
+    begin
+      aStr:='';
+      for j := 0 to 23 do
+      begin
+        aStr:=aStr+room.Data.Tile[k].Tile[i,j].ToString;
+        if j<23 then
+        begin
+          aStr:=aStr+#9;
+        end;
+      end;
+      aList.Add(aStr);
+    end;
+  end;
+
+  for k := 4 to 7 do
+  begin
+    aList.Add('Layer '+k.ToString);
+    for i := 0 to 9 do
+    begin
+      aStr:='';
+      for j := 0 to 23 do
+      begin
+        aStr:=aStr+room.Data.Obj[k].Bank[i,j].ToString+':'+room.Data.Obj[k].Obj[i,j].ToString;
+        if j<23 then
+        begin
+          aStr:=aStr+#9;
+        end;
+      end;
+      aList.Add(aStr);
+    end;
+  end;
+
+  //aList.SaveToFile('d:\debug\out.txt');
+  aList.Free;
+end;
+
 procedure TForm1.edKSPathChange(Sender: TObject);
 begin
   fKSDir := IncludeTrailingPathDelimiter(edKSPath.Text);
@@ -204,6 +261,15 @@ begin
     end;
   end;
   gLog.Free;
+end;
+
+procedure TForm1.FormShow(Sender: TObject);
+var
+  aIni: TIniFile;
+begin
+  aIni:=TIniFile.Create(IncludeTrailingPathDelimiter(ExtractFileDir(Application.ExeName))+'Settings.ini');
+  edKSPath.Text:=aIni.ReadString('Main','KSDir',edKSPath.Text);
+  aIni.Free;
 end;
 
 procedure TForm1.mvLevel1GoToRoom(Sender: TObject; iX, iY: integer);

@@ -50,7 +50,9 @@
       <Unit2>
         <Filename Value="ufrmMain.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmMain"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit2>
       <Unit3>
         <Filename Value="udlgInstalledLevelList.pas"/>
