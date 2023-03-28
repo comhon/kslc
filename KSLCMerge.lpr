@@ -2,10 +2,14 @@ program KSLCMerge;
 
 {$mode objfpc}{$H+}
 
+{$IFDEF UNIX}
+{$DEFINE UseCThreads}
+{$ENDIF}
+
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  {$IFDEF UseCThreads}
   cthreads,
-  {$ENDIF}{$ENDIF}
+  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, ufrmLevelMerger, uKSRepresentations, udlgDuplicateRooms, udlgRoomView
   { you can add units after this };

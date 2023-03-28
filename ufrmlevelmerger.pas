@@ -114,7 +114,7 @@ begin
   try
     dlgOpen.InitialDir := edKSPath.Text;
     dlgOpen.Title := 'Where is your Knytt Stories exe:';
-    dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories*.exe';
+    {$IFDEF WINDOWS}dlgOpen.Filter := 'Knytt Stories Executable|Knytt Stories*.exe';{$ENDIF}
     if (dlgOpen.Execute()) then
     begin
       fKSDir := IncludeTrailingPathDelimiter(ExtractFilePath(dlgOpen.Filename));
@@ -314,6 +314,7 @@ function TForm1.SelectLevel(out ALevelPath: string): boolean;
 var
   dlg: TdlgInstalledLevelList;
 begin
+  result:=false;
   // open initial level
   dlg := TdlgInstalledLevelList.Create(nil);
   dlg.KSDir := fKSDir;
@@ -337,6 +338,7 @@ begin
     end;
 
     ALevelPath := dlg.Path;
+    result:=true;
   finally
     dlg.Release();
   end;
