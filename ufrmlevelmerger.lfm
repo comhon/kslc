@@ -9,12 +9,13 @@ object Form1: TForm1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.0.10.0'
   object edLevel1Path: TEdit
     Left = 91
     Height = 23
     Top = 48
     Width = 480
+    OnChange = edLevel1PathChange
     TabOrder = 0
   end
   object btnSelLevel1Path: TButton
@@ -125,7 +126,7 @@ object Form1: TForm1
     Height = 25
     Top = 368
     Width = 75
-    Caption = 'btnDupl'
+    Caption = 'Join 1->2'
     OnClick = btnDuplClick
     TabOrder = 9
   end
@@ -177,5 +178,14 @@ object Form1: TForm1
     Width = 75
     OnClick = btnTextClick
     TabOrder = 11
+  end
+  object btnSave: TButton
+    Left = 741
+    Height = 25
+    Top = 368
+    Width = 75
+    Caption = 'Save'
+    OnClick = btnSaveClick
+    TabOrder = 12
   end
 end

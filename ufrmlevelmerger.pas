@@ -18,6 +18,7 @@ type
   TKSMapViews = array [1..2] of TKSMapView;
 
   TForm1 = class(TForm)
+    btnSave: TButton;
     btnOpenLevel2: TButton;
     btnSelLevel1Path: TButton;
     btnSelLevel2Path: TButton;
@@ -39,11 +40,13 @@ type
     procedure btnDuplClick(Sender: TObject);
     procedure btnOpenLevel1Click(Sender: TObject);
     procedure btnOpenLevel2Click(Sender: TObject);
+    procedure btnSaveClick(Sender: TObject);
     procedure btnSelKSDirClick(Sender: TObject);
     procedure btnSelLevel1PathClick(Sender: TObject);
     procedure btnSelLevel2PathClick(Sender: TObject);
     procedure btnTextClick(Sender: TObject);
     procedure edKSPathChange(Sender: TObject);
+    procedure edLevel1PathChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -62,10 +65,11 @@ type
     fRoomViews: TKSRoomViews;
     procedure FinitProgress();
     procedure InitProgress(iMsg: string);
+    function Join(): boolean;
     procedure OnLoadProgress(Sender: TObject; iCurrent, iMax: integer;
       iMessage: string);
     procedure OnLogUpdate(Sender: TObject);
-    function SelectLevel(out ALevelPath: string): boolean;
+    function SelectLevel(ACaption: string; out ALevelPath: string): boolean;
     function OpenLevel(ALevelNo: integer; ALevelFile: string): boolean;
     procedure GoToRoom(LevelNo: integer; XPos: integer; YPos: integer);
   public
@@ -143,7 +147,14 @@ begin
   OpenLevel(2,IncludeTrailingPathDelimiter(edLevel2Path.Text) + 'Map.bin');
 end;
 
-procedure TForm1.btnDuplClick(Sender: TObject);
+procedure TForm1.btnSaveClick(Sender: TObject);
+begin
+  fLevels[2].SaveToFile(IncludeTrailingPathDelimiter(edLevel2Path.Text) + 'Map_merged.bin');
+end;
+
+
+
+function TForm1.Join(): boolean;
 var
 	dlg: TdlgDuplicateRooms;
 	Sel: TList;
@@ -153,10 +164,15 @@ begin
           Sel:=mvLevel1.Selection;
           dlg.MapView.GoToCoord(mvLevel1.XPos, mvLevel1.YPos);
           dlg.MapView.Selection.Assign(Sel);
-          dlg.ShowModal();
+          result:=dlg.ShowModal() = mrOK;
 	finally
           dlg.Free();
 	end;
+end;
+
+procedure TForm1.btnDuplClick(Sender: TObject);
+begin
+        Join();
 end;
 
 procedure TForm1.btnSelLevel1PathClick(Sender: TObject);
@@ -164,7 +180,7 @@ var
   aPath: string;
 begin
 
-  if SelectLevel(aPath) then
+  if SelectLevel('Select level 1',aPath) then
   begin
     edLevel1Path.Text := aPath;
   end;
@@ -174,7 +190,7 @@ procedure TForm1.btnSelLevel2PathClick(Sender: TObject);
 var
   aPath: string;
 begin
-  if SelectLevel(aPath) then
+  if SelectLevel('Select level 2',aPath) then
   begin
     edLevel2Path.Text := aPath;
   end;
@@ -235,8 +251,21 @@ begin
   fKSDir := IncludeTrailingPathDelimiter(edKSPath.Text);
 end;
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TForm1.edLevel1PathChange(Sender: TObject);
 begin
+
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  aIni: TIniFile;
+  aPath: string;
+begin
+  aIni:=TIniFile.Create(IncludeTrailingPathDelimiter(ExtractFileDir(Application.ExeName))+'Settings.ini');
+  edKSPath.Text:=aIni.ReadString('Main','KSDir','');
+
+  aIni.Free;
+
   gLog := TKSLog.Create(LOG_INFO);
   gLog.OnUpdate.Add(@OnLogUpdate);
 
@@ -246,7 +275,54 @@ begin
   fRoomViews[1]:=rv1;
   fRoomViews[2]:=rv2;
 
+  if not DirectoryExists(edKSPath.Text+'Worlds') then
+  begin
+       btnSelKSDir.Click;
+  end;
+
   edKSPathChange(nil);
+
+  if (ParamStr(1) <> '') then
+  begin
+    edKsPath.Text:=ExtractFilePath(ExcludeTrailingPathDelimiter(ExtractFilePath(ExcludeTrailingPathDelimiter(ParamStr(1)))));
+    edLevel2Path.Text:=ParamStr(1);
+  end
+  else
+  begin
+    if SelectLevel('First select level you want to edit',aPath) then
+    begin
+      edLevel2Path.Text := aPath;
+    end
+    else
+    begin
+      Application.Terminate;
+    end;
+  end;
+
+  if edLevel2Path.Text = '' then
+  begin
+    Application.Terminate;
+  end;
+
+  btnOpenLevel2.Click;
+
+  if SelectLevel('Select level you want to merge',aPath) then
+  begin
+    edLevel1Path.Text := aPath;
+  end
+  else
+  begin
+    Application.Terminate;
+  end;
+
+  btnOpenLevel1.Click;
+  if Join() then
+  begin
+       ShowMessage('Merged level data saved to Map_merged.bin file.');
+       btnSave.Click;
+  end;
+  Application.Terminate;
+
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
@@ -264,12 +340,7 @@ begin
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
-var
-  aIni: TIniFile;
 begin
-  aIni:=TIniFile.Create(IncludeTrailingPathDelimiter(ExtractFileDir(Application.ExeName))+'Settings.ini');
-  edKSPath.Text:=aIni.ReadString('Main','KSDir',edKSPath.Text);
-  aIni.Free;
 end;
 
 procedure TForm1.mvLevel1GoToRoom(Sender: TObject; iX, iY: integer);
@@ -310,16 +381,17 @@ begin
   mLog.Lines.AddStrings(gLog.Items);
 end;
 
-function TForm1.SelectLevel(out ALevelPath: string): boolean;
+function TForm1.SelectLevel(ACaption: string; out ALevelPath: string): boolean;
 var
   dlg: TdlgInstalledLevelList;
 begin
   result:=false;
   // open initial level
   dlg := TdlgInstalledLevelList.Create(nil);
+  dlg.Caption:=ACaption;
   dlg.KSDir := fKSDir;
   try
-    dlg.Caption := 'Select level:';
+    dlg.Caption := ACaption;
     case dlg.ShowModal() of
       mrKSDirNotFound:
       begin
