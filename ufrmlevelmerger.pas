@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
   ComCtrls, uKSRoomView, uKSMapView, uKSLog, udlgInstalledLevelList,
-  uKSRepresentations, udlgDuplicateRooms, IniFiles;
+  uKSRepresentations, udlgDuplicateRooms, IniFiles, fileutil;
 
 type
 
@@ -148,8 +148,18 @@ begin
 end;
 
 procedure TForm1.btnSaveClick(Sender: TObject);
+var
+  aBackupFile: string;
+  aMapFile: string;
+  i: integer;
 begin
-  fLevels[2].SaveToFile(IncludeTrailingPathDelimiter(edLevel2Path.Text) + 'Map_merged.bin');
+  i:=0;
+  aMapFile:=IncludeTrailingPathDelimiter(edLevel2Path.Text) + 'Map.bin';
+  repeat
+    aBackupFile:=IncludeTrailingPathDelimiter(edLevel2Path.Text) + 'MapM'+IntToStr(i)+'.bin';
+  until not FileExists(aBackupFile);
+  CopyFile(aMapFile,aBackupFile);
+  fLevels[2].SaveToFile(aMapFile);
 end;
 
 
@@ -318,7 +328,7 @@ begin
   btnOpenLevel1.Click;
   if Join() then
   begin
-       ShowMessage('Merged level data saved to Map_merged.bin file.');
+       ShowMessage('Level was merged. Reload it the editor to show changes.');
        btnSave.Click;
   end;
   Application.Terminate;
